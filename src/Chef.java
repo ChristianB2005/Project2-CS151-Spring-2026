@@ -37,11 +37,6 @@ public class Chef extends Employee {
         return instanceCount;
     }
 
-    @Override
-    public void clockIn() {
-        // TODO: mark chef as on duty
-    }
-
     public void acceptOrder(Order order) {
         // TODO:
         // 1. validate order is not null
@@ -62,7 +57,7 @@ public class Chef extends Employee {
     @Override
     public void updateStatus(String status) {
         // TODO:
-        // define what "status" means for Chef in your project
+        // define what "status" means for Chef in project
         // examples: "Available", "Busy", "Off Duty"
     }
 
