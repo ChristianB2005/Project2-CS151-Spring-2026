@@ -1,5 +1,3 @@
-package restaurant;
-
 public class Kitchen {
     private Order[] activeOrders;
     private int activeOrderCount;

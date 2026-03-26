@@ -1,5 +1,3 @@
-package restaurant;
-
 public class Chef extends Employee {
     private String specialty;
     private Order[] currentOrders;
@@ -42,11 +40,6 @@ public class Chef extends Employee {
     @Override
     public void clockIn() {
         // TODO: mark chef as on duty
-    }
-
-    @Override
-    public void clockOut() {
-        // TODO: prevent clocking out if active orders still exist
     }
 
     public void acceptOrder(Order order) {
