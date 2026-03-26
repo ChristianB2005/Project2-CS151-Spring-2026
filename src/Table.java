@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Table implements Reservable{
+public class Table{
     private static int numTables = 0;
     private int maxCapacity;
     private Server server;
