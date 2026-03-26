@@ -76,7 +76,7 @@ public class Customer {
         if (!reservation.getCustomerName().equals(this.name)) {
             throw new RuntimeException("Cancelling wrong reservation.");
         }
-        if (reservation.getStatus().equals("CANCELLED")) {
+        if (reservation.getStatus().equals(Constants.RESERVATION_STATUS_CANCELLED)) {
             return false;
         }
         reservation.cancelReservation();

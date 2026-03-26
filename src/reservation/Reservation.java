@@ -40,19 +40,41 @@ public class Reservation {
         return "Reservation:" + name + ":" + reservationId;
     }
 
-    public void confirmReservation() {
-
+    public boolean confirmReservation() {
+        if (!this.status.equals(Constants.RESERVATION_STATUS_PENDING))
+            return false;
+        this.status = Constants.RESERVATION_STATUS_CONFIRMED;
+        return true;
     }
 
-    public void cancelReservation() {
-
+    public boolean cancelReservation() {
+        if (this.status.equals(Constants.RESERVATION_STATUS_CANCELLED))
+            return false;
+        this.status = Constants.RESERVATION_STATUS_CANCELLED;
+        return true;
     }
 
-    public void updatePartySize(int newSize, Table table) {
-
+    public boolean updatePartySize(int newSize, Table table) {
+        if (newSize <= 0) {
+            return false;
+        }
+        if (newSize > table.getCapacity()) {
+            return false;
+        }
+        if (this.status.equals("CANCELLED")) {
+            return false;
+        }
+        this.partySize = newSize;
+        return true;
     }
 
     public String getReservationDetails() {
-        return null;
+        return "Reservation{" +
+                "reservationId='" + reservationId + '\'' +
+                ", name='" + name + '\'' +
+                ", partySize=" + partySize +
+                ", tableId='" + tableId + '\'' +
+                ", status='" + status + '\'' +
+                '}';
     }
 }
