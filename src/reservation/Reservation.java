@@ -4,7 +4,7 @@ import constants.Constants;
 import table.Table;
 
 public class Reservation {
-    private int reservationId;
+    private String reservationId;
     private String name;
     private int partySize;
     private String tableId;
@@ -17,18 +17,19 @@ public class Reservation {
         this.name = customerName;
         this.partySize = partySize;
         this.tableId = tableId;
-        this.reservationId = instances;
+        this.reservationId = "Reservation" + instances;
         this.status = Constants.RESERVATION_STATUS_PENDING;
         instances++;
     }
 
-    public int getReservationId() { return reservationId; }
+    public static int getInstances() { return instances; }
+    public String getReservationId() { return reservationId; }
     public String getCustomerName() { return name; }
     public int getPartySize() { return partySize; }
     public String getTableId() { return tableId; }
     public String getStatus() { return status; }
 
-    public void setReservationId(int reservationId) { this.reservationId = reservationId; }
+    public void setReservationId(String reservationId) { this.reservationId = reservationId; }
     public void setCustomerName(String customerName) { this.name = customerName; }
     public void setPartySize(int partySize) { this.partySize = partySize; }
     public void setTableId(String tableId) { this.tableId = tableId; }
