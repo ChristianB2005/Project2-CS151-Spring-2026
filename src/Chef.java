@@ -38,11 +38,22 @@ public class Chef extends Employee {
     }
 
     public void acceptOrder(Order order) {
-        // TODO:
-        // 1. validate order is not null
-        // 2. validate chef is on duty
-        // 3. add order to currentOrders if space exists
-        // 4. possibly update order status to "IN_PROGRESS"
+        if (order == null) {
+            throw new IllegalArgumentException("Order cannot be null.");
+        }
+
+        if (!isOnDuty) {
+            throw new IllegalStateException("Chef must be on duty to accept an order.");
+        }
+
+        if (orderCount >= currentOrders.length) {
+            throw new IllegalStateException("Chef order queue is full.");
+        }
+
+        currentOrders[orderCount] = order;
+        orderCount++;
+
+        order.setOrderStatus(OrderStatus.IN_PROGRESS);
     }
 
     public void completeOrder(Order order) {
