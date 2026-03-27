@@ -63,11 +63,21 @@ public class MainUI {
             String input = getInput();
 
             switch (input) {
-                case "1": menuItemMenu(); break;
-                case "2": tableMenu(); break;
-                case "3": orderMenu(); break;
-                case "4": customerMenu(); break;
-                case "5": kitchenMenu(); break;
+                case "1":
+                    menuItemMenu();
+                    break;
+                case "2":
+                    tableMenu();
+                    break;
+                case "3":
+                    orderMenu();
+                    break;
+                case "4":
+                    customerMenu();
+                    break;
+                case "5":
+                    kitchenMenu();
+                    break;
                 case "6":
                     System.out.println("Goodbye!");
                     scanner.close();
@@ -78,7 +88,6 @@ public class MainUI {
         }
     }
 
-    
 
     public static void menuItemMenu() {
         while (true) {
@@ -97,15 +106,32 @@ public class MainUI {
             String input = getInput();
 
             switch (input) {
-                case "1": createMenuItem(); break;
-                case "2": updateMenuItemPrice(); break;
-                case "3": markMenuItemUnavailable(); break;
-                case "4": restockMenuItem(); break;
-                case "5": applyMenuItemDiscount(); break;
-                case "6": applyMenuItemFlatDiscount(); break;
-                case "7": viewAllMenuItems(); break;
-                case "8": selectMenuItem(); break;
-                case "9": return;
+                case "1":
+                    createMenuItem();
+                    break;
+                case "2":
+                    updateMenuItemPrice();
+                    break;
+                case "3":
+                    markMenuItemUnavailable();
+                    break;
+                case "4":
+                    restockMenuItem();
+                    break;
+                case "5":
+                    applyMenuItemDiscount();
+                    break;
+                case "6":
+                    applyMenuItemFlatDiscount();
+                    break;
+                case "7":
+                    viewAllMenuItems();
+                    break;
+                case "8":
+                    selectMenuItem();
+                    break;
+                case "9":
+                    return;
                 default:
                     System.out.println("Invalid choice. Please enter a number between 1 and 9.");
             }
@@ -235,7 +261,6 @@ public class MainUI {
     }
 
 
-
     public static void tableMenu() {
         while (true) {
             System.out.println("\n===== TABLE MANAGEMENT =====");
@@ -254,16 +279,35 @@ public class MainUI {
             String input = getInput();
 
             switch (input) {
-                case "1": createTable(); break;
-                case "2": addCustomerToTable(); break;
-                case "3": removeCustomerFromTable(); break;
-                case "4": clearTable(); break;
-                case "5": reserveTable(); break;
-                case "6": cancelReservation(); break;
-                case "7": viewTableStatus(); break;
-                case "8": viewAllTables(); break;
-                case "9": selectTable(); break;
-                case "10": return;
+                case "1":
+                    createTable();
+                    break;
+                case "2":
+                    addCustomerToTable();
+                    break;
+                case "3":
+                    removeCustomerFromTable();
+                    break;
+                case "4":
+                    clearTable();
+                    break;
+                case "5":
+                    reserveTable();
+                    break;
+                case "6":
+                    cancelReservation();
+                    break;
+                case "7":
+                    viewTableStatus();
+                    break;
+                case "8":
+                    viewAllTables();
+                    break;
+                case "9":
+                    selectTable();
+                    break;
+                case "10":
+                    return;
                 default:
                     System.out.println("Invalid choice. Please enter a number between 1 and 10.");
             }
@@ -397,7 +441,6 @@ public class MainUI {
         }
     }
 
-    
 
     public static void orderMenu() {
         while (true) {
@@ -417,16 +460,35 @@ public class MainUI {
             String input = getInput();
 
             switch (input) {
-                case "1": createOrder(); break;
-                case "2": addItemToOrder(); break;
-                case "3": removeItemFromOrder(); break;
-                case "4": viewCurrentOrder(); break;
-                case "5": applyOrderDiscount(); break;
-                case "6": applyOrderFlatDiscount(); break;
-                case "7": submitOrderToKitchen(); break;
-                case "8": viewAllOrders(); break;
-                case "9": selectOrder(); break;
-                case "10": return;
+                case "1":
+                    createOrder();
+                    break;
+                case "2":
+                    addItemToOrder();
+                    break;
+                case "3":
+                    removeItemFromOrder();
+                    break;
+                case "4":
+                    viewCurrentOrder();
+                    break;
+                case "5":
+                    applyOrderDiscount();
+                    break;
+                case "6":
+                    applyOrderFlatDiscount();
+                    break;
+                case "7":
+                    submitOrderToKitchen();
+                    break;
+                case "8":
+                    viewAllOrders();
+                    break;
+                case "9":
+                    selectOrder();
+                    break;
+                case "10":
+                    return;
                 default:
                     System.out.println("Invalid choice. Please enter a number between 1 and 10.");
             }
@@ -579,7 +641,6 @@ public class MainUI {
         }
     }
 
-  
 
     public static void customerMenu() {
         while (true) {
@@ -596,13 +657,26 @@ public class MainUI {
             String input = getInput();
 
             switch (input) {
-                case "1": createCustomer(); break;
-                case "2": viewCustomerInfo(); break;
-                case "3": updateCustomerName(); break;
-                case "4": setLoyaltyPoints(); break;
-                case "5": viewAllCustomers(); break;
-                case "6": selectCustomer(); break;
-                case "7": return;
+                case "1":
+                    createCustomer();
+                    break;
+                case "2":
+                    viewCustomerInfo();
+                    break;
+                case "3":
+                    updateCustomerName();
+                    break;
+                case "4":
+                    setLoyaltyPoints();
+                    break;
+                case "5":
+                    viewAllCustomers();
+                    break;
+                case "6":
+                    selectCustomer();
+                    break;
+                case "7":
+                    return;
                 default:
                     System.out.println("Invalid choice. Please enter a number between 1 and 7.");
             }
@@ -681,7 +755,7 @@ public class MainUI {
         }
     }
 
-   
+
     public static void kitchenMenu() {
         while (true) {
             System.out.println("\n===== KITCHEN MANAGEMENT =====");
@@ -700,16 +774,35 @@ public class MainUI {
             String input = getInput();
 
             switch (input) {
-                case "1": viewActiveOrders(); break;
-                case "2": completeOrder(); break;
-                case "3": viewKitchenStatus(); break;
-                case "4": addChef(); break;
-                case "5": viewAllChefs(); break;
-                case "6": selectChef(); break;
-                case "7": chefClockIn(); break;
-                case "8": chefClockOut(); break;
-                case "9": assignOrderToChef(); break;
-                case "10": return;
+                case "1":
+                    viewActiveOrders();
+                    break;
+                case "2":
+                    completeOrder();
+                    break;
+                case "3":
+                    viewKitchenStatus();
+                    break;
+                case "4":
+                    addChef();
+                    break;
+                case "5":
+                    viewAllChefs();
+                    break;
+                case "6":
+                    selectChef();
+                    break;
+                case "7":
+                    chefClockIn();
+                    break;
+                case "8":
+                    chefClockOut();
+                    break;
+                case "9":
+                    assignOrderToChef();
+                    break;
+                case "10":
+                    return;
                 default:
                     System.out.println("Invalid choice. Please enter a number between 1 and 10.");
             }

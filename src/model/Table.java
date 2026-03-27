@@ -2,6 +2,7 @@ package model;
 
 import exceptions.TooManyInstancesException;
 import util.Constants;
+
 import java.util.ArrayList;
 
 public class Table {
