@@ -53,23 +53,50 @@ public class Chef extends Employee {
         currentOrders[orderCount] = order;
         orderCount++;
 
-        order.setOrderStatus(OrderStatus.IN_PROGRESS);
+        order.setOrderStatus(OrderStatus.IN_KITCHEN);
     }
 
     public void completeOrder(Order order) {
-        // TODO:
-        // 1. locate the order in currentOrders
-        // 2. remove it from the array
-        // 3. shift remaining orders left
-        // 4. decrement orderCount
-        // 5. mark order as ready/completed
+        if (order == null) {
+            throw new IllegalArgumentException("Order cannot be null.");
+        }
+
+        int orderIndex = -1;
+
+        for (int i = 0; i < orderCount; i++) {
+            if (currentOrders[i] == order) {
+                orderIndex = i;
+                break;
+            }
+        }
+
+        if (orderIndex == -1) {
+            throw new IllegalStateException("Order not found in this chef's queue.");
+        }
+
+        for (int i = orderIndex; i < orderCount - 1; i++) {
+            currentOrders[i] = currentOrders[i + 1];
+        }
+
+        currentOrders[orderCount - 1] = null;
+        orderCount--;
+
+        order.setOrderStatus(OrderStatus.READY);
     }
 
     @Override
     public void updateStatus(String status) {
-        // TODO:
-        // define what "status" means for Chef in project
-        // examples: "Available", "Busy", "Off Duty"
+        if (status == null) {
+            throw new IllegalArgumentException("Status cannot be null.");
+        }
+
+        if (status.equalsIgnoreCase("Available") || status.equalsIgnoreCase("Busy")) {
+            this.isOnDuty = true;
+        } else if (status.equalsIgnoreCase("Off Duty")) {
+            this.isOnDuty = false;
+        } else {
+            throw new IllegalArgumentException("Invalid chef status.");
+        }
     }
 
     public String viewQueue() {
