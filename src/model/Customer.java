@@ -124,7 +124,8 @@ public class Customer {
         if (table == null) {
             throw new IllegalArgumentException("Table cannot be null.");
         }
-        if (activeReservation != null && !activeReservation.getStatus().equals(Constants.RESERVATION_STATUS_CANCELLED)) {
+        if (activeReservation != null &&
+                !activeReservation.getStatus().equals(Constants.RESERVATION_STATUS_CANCELLED)) {
             return false;
         }
         if (table.isOccupied() || table.isReserved()) {
@@ -184,27 +185,25 @@ public class Customer {
             return false;
         }
 
-        double amount = order.getPrice();
-        if (amount <= 0) {
-            this.bill = 0.0;
-            return true;
+        double amountPaid = this.bill;
+        if (amountPaid < 0) {
+            return false;
         }
 
         this.bill = 0.0;
-        earnPoints(amount);
+        earnPoints(amountPaid);
         return true;
     }
 
-    public boolean applyDiscount(double percent) {
-        if (percent <= 0 || percent > 100) {
+    public boolean applyDiscount(double percentage) {
+        if (percentage < 0 || percentage > 1) {
             return false;
         }
         if (this.bill <= 0) {
             return false;
         }
 
-        double discountAmount = this.bill * (percent / 100.0);
-        this.bill -= discountAmount;
+        this.bill *= (1 - percentage);
         return true;
     }
 
