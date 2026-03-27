@@ -57,7 +57,7 @@ public class Reservation {
         if (newSize <= 0) {
             return false;
         }
-        if (newSize > table.getCapacity()) {
+        if (newSize > table.getMaxCapacity()) {
             return false;
         }
         if (this.status.equals("CANCELLED")) {
