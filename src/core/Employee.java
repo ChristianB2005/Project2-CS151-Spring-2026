@@ -1,3 +1,4 @@
+package core;
 public abstract class Employee {
     protected String employeeId;
     protected String name;

@@ -1,4 +1,9 @@
-public class MenuItem {
+package model;
+import util.Constants;
+import core.Discountable;
+import exceptions.InvalidDiscountException;
+
+public class MenuItem implements Discountable {
 
     private static int instanceCount = 0;
 
@@ -22,17 +27,19 @@ public class MenuItem {
         instanceCount++;
     }
 
+    // Getters
     public String getItemId() { return itemId; }
     public String getName() { return name; }
-    public double getPrice() { return price; }
     public String getCategory() { return category; }
     public boolean isAvailable() { return isAvailable; }
     public int getStockCount() { return stockCount; }
     public static int getInstanceCount() { return instanceCount; }
 
+    // Setters
     public void setItemId(String itemId) { this.itemId = itemId; }
     public void setName(String name) { this.name = name; }
     public void setCategory(String category) { this.category = category; }
+    public void setAvailable(boolean isAvailable) { this.isAvailable = isAvailable; }
 
     public void setPrice(double price) {
         if (price <= 0) {
@@ -51,6 +58,35 @@ public class MenuItem {
         }
     }
 
+    // Discountable interface methods — matches interface exactly
+    @Override
+    public void applyFlatDiscount() throws InvalidDiscountException {
+        if (price <= 0) {
+            throw new InvalidDiscountException("Cannot apply flat discount to item with invalid price.");
+        }
+        this.price -= 1.00; // flat $1.00 discount — adjust as needed
+        if (this.price <= 0) {
+            throw new InvalidDiscountException("Discount cannot reduce price to zero or below.");
+        }
+    }
+
+    @Override
+    public void applyDiscount() throws InvalidDiscountException {
+        if (price <= 0) {
+            throw new InvalidDiscountException("Cannot apply discount to item with invalid price.");
+        }
+        this.price -= (this.price * 0.10); // 10% discount — adjust as needed
+        if (this.price <= 0) {
+            throw new InvalidDiscountException("Discount cannot reduce price to zero or below.");
+        }
+    }
+
+    @Override
+    public double getPrice() {
+        return this.price;
+    }
+
+    // Other MenuItem methods
     public void updatePrice(double newPrice) {
         if (newPrice <= 0) {
             throw new IllegalArgumentException("Price must be greater than zero.");
@@ -86,6 +122,10 @@ public class MenuItem {
             throw new IllegalArgumentException("Modified price cannot be zero or negative.");
         }
         return modifiedPrice;
+    }
+
+    public static void resetInstanceCount() {
+        instanceCount = 0;
     }
 
     @Override
