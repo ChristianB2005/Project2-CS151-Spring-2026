@@ -1,4 +1,9 @@
+package model;
 import java.util.HashMap;
+
+import core.Discountable;
+import exceptions.InvalidDiscountException;
+import util.OrderStatus;
 
 public class Order implements Discountable{
     private static int numOrders = 0;
@@ -21,10 +26,12 @@ public class Order implements Discountable{
             // throw error
         }
         orderList.put(customer, order);
+        //TODO increment price from MenuItem
     }
 
     public void removeOrder(Customer customer){
         orderList.remove(customer);
+        //TODO decrement price from MenuItem
     }
 
     public double getPrice(){
