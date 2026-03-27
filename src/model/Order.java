@@ -1,8 +1,10 @@
 package model;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 import core.Discountable;
 import exceptions.InvalidDiscountException;
+import exceptions.TooManyInstancesException;
 import util.Constants;
 import util.OrderStatus;
 
@@ -12,9 +14,9 @@ public class Order implements Discountable{
     private double totalPrice;
     private OrderStatus orderStatus;
 
-    public Order(){
+    public Order() throws TooManyInstancesException{
         if (numOrders >= Constants.MAXIMUM_INSTANCES){
-            throw new RuntimeException("Maximum number of Order instances reached");
+            throw new TooManyInstancesException("Maximum number of Order instances reached");
         }
         orderList = new HashMap<>();
         orderStatus = OrderStatus.TAKING_ORDER;
@@ -27,12 +29,15 @@ public class Order implements Discountable{
             // throw error
         }
         orderList.put(customer, order);
-        //TODO increment price from MenuItem
+        totalPrice += order.getPrice();
     }
 
     public void removeOrder(Customer customer){
+        if (orderStatus != OrderStatus.TAKING_ORDER){
+            // throw error
+        }
+        totalPrice -= orderList.get(customer).getPrice();
         orderList.remove(customer);
-        //TODO decrement price from MenuItem
     }
 
     public double getPrice(){
@@ -45,6 +50,14 @@ public class Order implements Discountable{
 
     public OrderStatus getOrderStatus(){
         return orderStatus;
+    }
+
+    public ArrayList<MenuItem> getOrderContents(){
+        ArrayList<MenuItem> order = new ArrayList<>();
+        for (MenuItem item : orderList.values()){
+            order.add(item);
+        }
+        return order;
     }
 
     public void applyFlatDiscount(double discountAmount) throws InvalidDiscountException{
@@ -61,5 +74,15 @@ public class Order implements Discountable{
         }else{
             totalPrice *= (1 - percentage);
         }
+    }
+
+    @Override
+    public String toString(){
+        String returnString = "";
+        for (Customer customer : orderList.keySet()){
+            returnString += customer.getName() + " ordered " + orderList.get(customer).getName() + "\n";
+        }
+        returnString += "Total price: " + totalPrice;
+        return returnString;
     }
 }
