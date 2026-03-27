@@ -58,7 +58,7 @@ public class Chef extends Employee {
 
     @Override
     public void clockIn() {
-        this.isOnDuty = true;
+        super.clockIn();
         this.chefStatus = "Available";
     }
 
@@ -68,7 +68,7 @@ public class Chef extends Employee {
             throw new IllegalStateException("Chef cannot clock out while orders are still assigned.");
         }
 
-        this.isOnDuty = false;
+        super.clockOut();
         this.chefStatus = "Off Duty";
     }
 
@@ -77,7 +77,7 @@ public class Chef extends Employee {
             throw new IllegalArgumentException("Order cannot be null.");
         }
 
-        if (!isOnDuty) {
+        if (!isOnDuty()) {
             throw new IllegalStateException("Chef must be on duty to accept an order.");
         }
 
@@ -121,7 +121,7 @@ public class Chef extends Employee {
 
         order.setOrderStatus(OrderStatus.READY);
 
-        if (!isOnDuty) {
+        if (!isOnDuty()) {
             chefStatus = "Off Duty";
         } else if (orderCount == 0) {
             chefStatus = "Available";
@@ -158,7 +158,7 @@ public class Chef extends Employee {
         currentOrders[orderCount - 1] = null;
         orderCount--;
 
-        if (!isOnDuty) {
+        if (!isOnDuty()) {
             chefStatus = "Off Duty";
         } else if (orderCount == 0) {
             chefStatus = "Available";
@@ -179,16 +179,16 @@ public class Chef extends Employee {
 
         if (status.equalsIgnoreCase("Available")) {
             this.chefStatus = "Available";
-            this.isOnDuty = true;
+            setOnDuty(true);
         } else if (status.equalsIgnoreCase("Busy")) {
             this.chefStatus = "Busy";
-            this.isOnDuty = true;
+            setOnDuty(true);
         } else if (status.equalsIgnoreCase("Off Duty")) {
             if (orderCount > 0) {
                 throw new IllegalStateException("Chef cannot be marked off duty while orders are still assigned.");
             }
             this.chefStatus = "Off Duty";
-            this.isOnDuty = false;
+            setOnDuty(false);
         } else {
             throw new IllegalArgumentException("Invalid chef status.");
         }
@@ -196,11 +196,11 @@ public class Chef extends Employee {
 
     public String viewQueue() {
         if (orderCount == 0) {
-            return "No current orders assigned to chef " + name + ".";
+            return "No current orders assigned to chef " + getName() + ".";
         }
 
         StringBuilder result = new StringBuilder();
-        result.append("Current orders for chef ").append(name).append(":\n");
+        result.append("Current orders for chef ").append(getName()).append(":\n");
 
         for (int i = 0; i < orderCount; i++) {
             result.append(i + 1)
