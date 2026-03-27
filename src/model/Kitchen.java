@@ -183,7 +183,7 @@ public class Kitchen {
             }
         }
 
-        return "Kitchen Daily Summary:\n" +
+        return "Kitchen Daily Summary:" +
                 "Active Orders: " + activeOrderCount + "\n" +
                 "Total Orders Completed: " + totalOrdersCompleted + "\n" +
                 "Total Staff: " + staffCount + "\n" +

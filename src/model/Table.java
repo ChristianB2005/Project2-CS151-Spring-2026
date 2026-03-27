@@ -28,7 +28,7 @@ public class Table {
         this.isOccupied = false;
         this.isReserved = false;
         this.reservedForName = null;
-        this.customersAtTable = new ArrayList<Customer>();
+        this.customersAtTable = new ArrayList<>();
     }
 
     public String getTableID() {
