@@ -6,6 +6,7 @@ import util.OrderStatus;
 
 public class Chef extends Employee {
     private String specialty;
+    private String chefStatus;
     private Order[] currentOrders;
     private int orderCount;
     private static int instanceCount = 0;
@@ -14,10 +15,15 @@ public class Chef extends Employee {
         super(employeeId, name);
 
         if (instanceCount >= Constants.MAXIMUM_INSTANCES) {
-            throw new IllegalStateException("Maximum number of model.Chef instances reached.");
+            throw new IllegalStateException("Maximum number of Chef instances reached.");
+        }
+
+        if (specialty == null || specialty.trim().isEmpty()) {
+            throw new IllegalArgumentException("Chef specialty cannot be null or empty.");
         }
 
         this.specialty = specialty;
+        this.chefStatus = "Off Duty";
         this.currentOrders = new Order[Constants.MAXIMUM_INSTANCES];
         this.orderCount = 0;
         instanceCount++;
@@ -28,7 +34,14 @@ public class Chef extends Employee {
     }
 
     public void setSpecialty(String specialty) {
+        if (specialty == null || specialty.trim().isEmpty()) {
+            throw new IllegalArgumentException("Chef specialty cannot be null or empty.");
+        }
         this.specialty = specialty;
+    }
+
+    public String getChefStatus() {
+        return chefStatus;
     }
 
     public Order[] getCurrentOrders() {
@@ -43,23 +56,49 @@ public class Chef extends Employee {
         return instanceCount;
     }
 
+    @Override
+    public void clockIn() {
+        super.clockIn();
+        this.chefStatus = "Available";
+    }
+
+    @Override
+    public void clockOut() {
+        if (orderCount > 0) {
+            throw new IllegalStateException("Chef cannot clock out while orders are still assigned.");
+        }
+
+        super.clockOut();
+        this.chefStatus = "Off Duty";
+    }
+
     public void acceptOrder(Order order) {
         if (order == null) {
             throw new IllegalArgumentException("Order cannot be null.");
         }
 
-        if (!isOnDuty) {
-            throw new IllegalStateException("model.Chef must be on duty to accept an order.");
+        if (!isOnDuty()) {
+            throw new IllegalStateException("Chef must be on duty to accept an order.");
         }
 
         if (orderCount >= currentOrders.length) {
-            throw new IllegalStateException("model.Chef order queue is full.");
+            throw new IllegalStateException("Chef order queue is full.");
+        }
+
+        for (int i = 0; i < orderCount; i++) {
+            if (currentOrders[i] == order) {
+                throw new IllegalStateException("Order is already assigned to this chef.");
+            }
         }
 
         currentOrders[orderCount] = order;
         orderCount++;
 
         order.setOrderStatus(OrderStatus.IN_KITCHEN);
+
+        if (orderCount > 0) {
+            chefStatus = "Busy";
+        }
     }
 
     public void completeOrder(Order order) {
@@ -67,14 +106,7 @@ public class Chef extends Employee {
             throw new IllegalArgumentException("Order cannot be null.");
         }
 
-        int orderIndex = -1;
-
-        for (int i = 0; i < orderCount; i++) {
-            if (currentOrders[i] == order) {
-                orderIndex = i;
-                break;
-            }
-        }
+        int orderIndex = findOrderIndex(order);
 
         if (orderIndex == -1) {
             throw new IllegalStateException("Order not found in this chef's queue.");
@@ -88,6 +120,55 @@ public class Chef extends Employee {
         orderCount--;
 
         order.setOrderStatus(OrderStatus.READY);
+
+        if (!isOnDuty()) {
+            chefStatus = "Off Duty";
+        } else if (orderCount == 0) {
+            chefStatus = "Available";
+        } else {
+            chefStatus = "Busy";
+        }
+    }
+
+    public void transferOrder(Order order, Chef otherChef) {
+        if (order == null) {
+            throw new IllegalArgumentException("Order cannot be null.");
+        }
+
+        if (otherChef == null) {
+            throw new IllegalArgumentException("Receiving chef cannot be null.");
+        }
+
+        if (otherChef == this) {
+            throw new IllegalArgumentException("Chef cannot transfer an order to themselves.");
+        }
+
+        int orderIndex = findOrderIndex(order);
+
+        if (orderIndex == -1) {
+            throw new IllegalStateException("Order not found in this chef's queue.");
+        }
+
+        otherChef.acceptOrder(order);
+
+        for (int i = orderIndex; i < orderCount - 1; i++) {
+            currentOrders[i] = currentOrders[i + 1];
+        }
+
+        currentOrders[orderCount - 1] = null;
+        orderCount--;
+
+        if (!isOnDuty()) {
+            chefStatus = "Off Duty";
+        } else if (orderCount == 0) {
+            chefStatus = "Available";
+        } else {
+            chefStatus = "Busy";
+        }
+    }
+
+    public boolean hasActiveOrders() {
+        return orderCount > 0;
     }
 
     @Override
@@ -96,10 +177,18 @@ public class Chef extends Employee {
             throw new IllegalArgumentException("Status cannot be null.");
         }
 
-        if (status.equalsIgnoreCase("Available") || status.equalsIgnoreCase("Busy")) {
-            this.isOnDuty = true;
+        if (status.equalsIgnoreCase("Available")) {
+            this.chefStatus = "Available";
+            setOnDuty(true);
+        } else if (status.equalsIgnoreCase("Busy")) {
+            this.chefStatus = "Busy";
+            setOnDuty(true);
         } else if (status.equalsIgnoreCase("Off Duty")) {
-            this.isOnDuty = false;
+            if (orderCount > 0) {
+                throw new IllegalStateException("Chef cannot be marked off duty while orders are still assigned.");
+            }
+            this.chefStatus = "Off Duty";
+            setOnDuty(false);
         } else {
             throw new IllegalArgumentException("Invalid chef status.");
         }
@@ -107,24 +196,38 @@ public class Chef extends Employee {
 
     public String viewQueue() {
         if (orderCount == 0) {
-            return "No current orders assigned to chef " + name + ".";
+            return "No current orders assigned to chef " + getName() + ".";
         }
 
-        String result = "Current orders for chef " + name + ":\n";
+        StringBuilder result = new StringBuilder();
+        result.append("Current orders for chef ").append(getName()).append(":\n");
 
         for (int i = 0; i < orderCount; i++) {
-            result += (i + 1) + ". " + currentOrders[i] + "\n";
+            result.append(i + 1)
+                    .append(". ")
+                    .append(currentOrders[i])
+                    .append("\n");
         }
 
-        return result;
+        return result.toString();
+    }
+
+    private int findOrderIndex(Order order) {
+        for (int i = 0; i < orderCount; i++) {
+            if (currentOrders[i] == order) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
     public String toString() {
-        return "model.Chef{" +
+        return "Chef{" +
                 "employeeId='" + getEmployeeId() + '\'' +
                 ", name='" + getName() + '\'' +
                 ", specialty='" + specialty + '\'' +
+                ", chefStatus='" + chefStatus + '\'' +
                 ", isOnDuty=" + isOnDuty() +
                 ", orderCount=" + orderCount +
                 '}';
