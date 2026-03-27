@@ -112,6 +112,10 @@ public class Server extends Employee {
             throw new IllegalStateException("Cannot remove an occupied table from a server.");
         }
 
+        if (table.isReserved()) {
+            throw new IllegalStateException("Cannot remove a reserved table from a server.");
+        }
+
         for (int i = tableIndex; i < tableCount - 1; i++) {
             assignedTables[i] = assignedTables[i + 1];
         }
@@ -120,7 +124,6 @@ public class Server extends Employee {
         tableCount--;
 
         table.clearOccupancy();
-        table.setOccupation(false);
 
         refreshServerStatus();
     }
@@ -150,8 +153,15 @@ public class Server extends Employee {
             throw new IllegalStateException("Customer party size exceeds the table capacity.");
         }
 
+        if (table.isReserved()) {
+            String reservedFor = table.getReservedForName();
+
+            if (reservedFor == null || !reservedFor.equalsIgnoreCase(customer.getName())) {
+                throw new IllegalStateException("Table is reserved for another customer.");
+            }
+        }
+
         table.addCustomer(customer);
-        table.setOccupation(true);
         table.assignServer(this);
         customer.setIsSeated(true);
 
@@ -215,7 +225,6 @@ public class Server extends Employee {
         }
 
         table.clearOccupancy();
-        table.setOccupation(false);
         table.assignServer(this);
 
         refreshServerStatus();
