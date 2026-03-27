@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import core.Discountable;
 import exceptions.InvalidDiscountException;
 import exceptions.TooManyInstancesException;
+import exceptions.InvalidOrderState;
 import util.Constants;
 import util.OrderStatus;
 
@@ -24,17 +25,20 @@ public class Order implements Discountable{
         totalPrice = 0;
     }
 
-    public void addOrder(Customer customer, MenuItem order){
+    public void addOrder(Customer customer, MenuItem order) throws InvalidOrderState{
         if (orderStatus != OrderStatus.TAKING_ORDER){
-            // throw error
+            throw new InvalidOrderState("Cannot modify order after it has been submitted");
+        }
+        if (orderList.containsKey(customer)){
+            totalPrice -= orderList.get(customer).getPrice();
         }
         orderList.put(customer, order);
         totalPrice += order.getPrice();
     }
 
-    public void removeOrder(Customer customer){
+    public void removeOrder(Customer customer) throws InvalidOrderState{
         if (orderStatus != OrderStatus.TAKING_ORDER){
-            // throw error
+            throw new InvalidOrderState("Cannot modify order after it has been submitted");
         }
         totalPrice -= orderList.get(customer).getPrice();
         orderList.remove(customer);
@@ -63,9 +67,11 @@ public class Order implements Discountable{
     public void applyFlatDiscount(double discountAmount) throws InvalidDiscountException{
         if (totalPrice - discountAmount < 0){
             throw new InvalidDiscountException("Flat discount cannot make the price negative");
-        }else{
-            totalPrice -= discountAmount;
         }
+        if (discountAmount < 0){
+            throw new InvalidDiscountException("Discount amount cannot be negative");
+        }
+        totalPrice -= discountAmount;
     }
 
     public void applyDiscount(double percentage) throws InvalidDiscountException{
