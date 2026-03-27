@@ -1,5 +1,6 @@
 package model;
 
+import exceptions.TooManyInstancesException;
 import util.Constants;
 import java.util.ArrayList;
 
@@ -13,9 +14,9 @@ public class Table {
     private String tableID;
     private final ArrayList<Customer> customersAtTable;
 
-    public Table(int maxCapacity) {
+    public Table(int maxCapacity) throws TooManyInstancesException {
         if (numTables >= Constants.MAXIMUM_INSTANCES) {
-            throw new RuntimeException("Maximum number of Table instances reached.");
+            throw new TooManyInstancesException("Maximum number of Table instances reached.");
         }
         if (maxCapacity <= 0) {
             throw new IllegalArgumentException("Table capacity must be greater than zero.");

@@ -1,6 +1,7 @@
 package model;
 
 import core.Employee;
+import exceptions.TooManyInstancesException;
 import util.Constants;
 import util.OrderStatus;
 
@@ -11,11 +12,11 @@ public class Chef extends Employee {
     private int orderCount;
     private static int instanceCount = 0;
 
-    public Chef(String employeeId, String name, String specialty) {
+    public Chef(String employeeId, String name, String specialty) throws TooManyInstancesException {
         super(employeeId, name);
 
         if (instanceCount >= Constants.MAXIMUM_INSTANCES) {
-            throw new IllegalStateException("Maximum number of Chef instances reached.");
+            throw new TooManyInstancesException("Maximum number of Chef instances reached.");
         }
 
         if (specialty == null || specialty.trim().isEmpty()) {
