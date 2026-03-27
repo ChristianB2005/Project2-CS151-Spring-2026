@@ -1,3 +1,5 @@
+package restaurant.model;
+
 public class Kitchen {
     private Order[] activeOrders;
     private int activeOrderCount;
@@ -9,7 +11,7 @@ public class Kitchen {
 
     public Kitchen(int maxCapacity) {
         if (instanceCount >= Constants.MAXIMUM_INSTANCES) {
-            throw new IllegalStateException("Maximum number of Kitchen instances reached.");
+            throw new IllegalStateException("Maximum number of restaurant.model.Kitchen instances reached.");
         }
 
         this.activeOrders = new Order[Constants.MAXIMUM_INSTANCES];
@@ -100,7 +102,7 @@ public class Kitchen {
 
     @Override
     public String toString() {
-        return "Kitchen{" +
+        return "restaurant.model.Kitchen{" +
                 "activeOrderCount=" + activeOrderCount +
                 ", staffCount=" + staffCount +
                 ", maxCapacity=" + maxCapacity +

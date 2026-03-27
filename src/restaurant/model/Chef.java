@@ -1,3 +1,5 @@
+package restaurant.model;
+
 public class Chef extends Employee {
     private String specialty;
     private Order[] currentOrders;
@@ -8,7 +10,7 @@ public class Chef extends Employee {
         super(employeeId, name);
 
         if (instanceCount >= Constants.MAXIMUM_INSTANCES) {
-            throw new IllegalStateException("Maximum number of Chef instances reached.");
+            throw new IllegalStateException("Maximum number of restaurant.model.Chef instances reached.");
         }
 
         this.specialty = specialty;
@@ -43,11 +45,11 @@ public class Chef extends Employee {
         }
 
         if (!isOnDuty) {
-            throw new IllegalStateException("Chef must be on duty to accept an order.");
+            throw new IllegalStateException("restaurant.model.Chef must be on duty to accept an order.");
         }
 
         if (orderCount >= currentOrders.length) {
-            throw new IllegalStateException("Chef order queue is full.");
+            throw new IllegalStateException("restaurant.model.Chef order queue is full.");
         }
 
         currentOrders[orderCount] = order;
@@ -115,7 +117,7 @@ public class Chef extends Employee {
 
     @Override
     public String toString() {
-        return "Chef{" +
+        return "restaurant.model.Chef{" +
                 "employeeId='" + getEmployeeId() + '\'' +
                 ", name='" + getName() + '\'' +
                 ", specialty='" + specialty + '\'' +
