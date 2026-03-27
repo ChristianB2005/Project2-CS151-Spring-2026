@@ -1,8 +1,8 @@
 package order;
 
-import priceable.Priceable;
+import priceable.Discountable;
 
-public class Order implements Priceable {
+public class Order implements Discountable {
     @Override
     public double calculateTotal() {
         return 0;
@@ -14,7 +14,7 @@ public class Order implements Priceable {
     }
 
     @Override
-    public double getBasePrice() {
+    public double getPrice() {
         return 0;
     }
 
