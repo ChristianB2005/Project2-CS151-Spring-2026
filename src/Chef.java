@@ -100,8 +100,17 @@ public class Chef extends Employee {
     }
 
     public String viewQueue() {
-        // TODO: return a formatted String of current orders
-        return "";
+        if (orderCount == 0) {
+            return "No current orders assigned to chef " + name + ".";
+        }
+
+        String result = "Current orders for chef " + name + ":\n";
+
+        for (int i = 0; i < orderCount; i++) {
+            result += (i + 1) + ". " + currentOrders[i] + "\n";
+        }
+
+        return result;
     }
 
     @Override
