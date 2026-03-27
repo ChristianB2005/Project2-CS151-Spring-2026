@@ -1,3 +1,5 @@
+package model;
+
 public class Table {
     private boolean isReserved;
 

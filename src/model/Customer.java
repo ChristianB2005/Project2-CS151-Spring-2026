@@ -1,3 +1,7 @@
+package model;
+
+import util.Constants;
+
 public class Customer {
     private String customerID;
     private String name;
@@ -8,10 +12,10 @@ public class Customer {
     private Table reservedTable;
     private static int instances = 0;
 
-//    public Customer(String name, int partySize, int loyaltyPoints, double bill, boolean isSeated, Table reservedTable) {
-//        if (instances >= Constants.MAXIMUM_INSTANCES)
-//            throw new RuntimeException("Maximum number of Customer instances reached.");
-//        this.customerID = "Customer" + instances;
+//    public model.Customer(String name, int partySize, int loyaltyPoints, double bill, boolean isSeated, model.Table reservedTable) {
+//        if (instances >= util.Constants.MAXIMUM_INSTANCES)
+//            throw new RuntimeException("Maximum number of model.Customer instances reached.");
+//        this.customerID = "model.Customer" + instances;
 //        this.name = name;
 //        this.partySize = partySize;
 //        this.loyaltyPoints = loyaltyPoints;
@@ -23,8 +27,8 @@ public class Customer {
 
     public Customer(String name, int partySize) {
         if (instances >= Constants.MAXIMUM_INSTANCES)
-            throw new RuntimeException("Maximum number of Customer instances reached.");
-        this.customerID = "Customer" + instances;
+            throw new RuntimeException("Maximum number of model.Customer instances reached.");
+        this.customerID = "model.Customer" + instances;
         this.name = name;
         this.partySize = partySize;
         this.loyaltyPoints = 0;
@@ -49,7 +53,7 @@ public class Customer {
 
     @Override
     public String toString() {
-        return "Customer:" + name + ":" + customerID;
+        return "model.Customer:" + name + ":" + customerID;
     }
 
     public boolean makeReservation(Table table) {
@@ -79,7 +83,7 @@ public class Customer {
 
     public boolean payBill(Order order) {
         if (order == null) {
-            throw new RuntimeException("No order provided for Customer to pay bill");
+            throw new RuntimeException("No order provided for model.Customer to pay bill");
         }
         if (!order.getStatus().equals(Constants.ORDER_READY)) {
             return false;

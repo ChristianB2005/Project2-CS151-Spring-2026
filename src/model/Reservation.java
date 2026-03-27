@@ -1,3 +1,7 @@
+package model;
+
+import util.Constants;
+
 public class Reservation {
     private String reservationId;
     private String name;
@@ -8,11 +12,11 @@ public class Reservation {
 
     public Reservation(String customerName, int partySize, String tableId) {
         if (instances >= Constants.MAXIMUM_INSTANCES)
-            throw new RuntimeException("Maximum number of Reservation instances reached.");
+            throw new RuntimeException("Maximum number of model.Reservation instances reached.");
         this.name = customerName;
         this.partySize = partySize;
         this.tableId = tableId;
-        this.reservationId = "Reservation" + instances;
+        this.reservationId = "model.Reservation" + instances;
         this.status = Constants.RESERVATION_STATUS_PENDING;
         instances++;
     }
@@ -32,7 +36,7 @@ public class Reservation {
 
     @Override
     public String toString() {
-        return "Reservation:" + name + ":" + reservationId;
+        return "model.Reservation:" + name + ":" + reservationId;
     }
 
     public boolean confirmReservation() {
@@ -64,7 +68,7 @@ public class Reservation {
     }
 
     public String getReservationDetails() {
-        return "Reservation{" +
+        return "model.Reservation{" +
                 "reservationId='" + reservationId + '\'' +
                 ", name='" + name + '\'' +
                 ", partySize=" + partySize +

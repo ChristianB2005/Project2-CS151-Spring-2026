@@ -1,3 +1,7 @@
+package model;
+
+import core.Discountable;
+
 public class Order implements Discountable {
     @Override
     public double calculateTotal() {
