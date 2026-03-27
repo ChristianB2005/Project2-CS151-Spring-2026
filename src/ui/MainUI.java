@@ -1,35 +1,48 @@
 package ui;
 
-import exceptions.InvalidDiscountException;
-import exceptions.KitchenAtCapacityException;
-import exceptions.TooManyInstancesException;
-import java.util.ArrayList;
-import java.util.Scanner;
-import model.Chef;
-import model.Customer;
-import model.Kitchen;
+import util.Constants;
 import model.MenuItem;
 import model.Order;
+import model.Customer;
 import model.Table;
+import model.Kitchen;
+import model.Chef;
+import exceptions.InvalidDiscountException;
+import exceptions.TooManyInstancesException;
+import exceptions.KitchenAtCapacityException;
 import util.OrderStatus;
+
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class MainUI {
 
     private static Scanner scanner = new Scanner(System.in);
 
+    // Current working objects
     private static MenuItem currentItem = null;
     private static Order currentOrder = null;
     private static Customer currentCustomer = null;
     private static Table currentTable = null;
-    private static Kitchen kitchen = new Kitchen(5); // max 5 active orders
+    private static Kitchen kitchen;
     private static Chef currentChef = null;
 
-    
+    // Storage lists
     private static ArrayList<MenuItem> menuItems = new ArrayList<>();
     private static ArrayList<Customer> customers = new ArrayList<>();
     private static ArrayList<Table> tables = new ArrayList<>();
     private static ArrayList<Order> orders = new ArrayList<>();
     private static ArrayList<Chef> chefs = new ArrayList<>();
+
+    // Static block to initialize kitchen (handles potential exceptions)
+    static {
+        try {
+            kitchen = new Kitchen(5); // max 5 active orders
+        } catch (Exception e) {
+            System.out.println("Failed to initialize kitchen: " + e.getMessage());
+            System.exit(1);
+        }
+    }
 
     public static void main(String[] args) {
         System.out.println("Welcome to the Restaurant Management System");
@@ -65,7 +78,7 @@ public class MainUI {
         }
     }
 
-    // MENU ITEM MANAGEMENT
+    
 
     public static void menuItemMenu() {
         while (true) {
@@ -119,6 +132,8 @@ public class MainUI {
             currentItem = new MenuItem(itemId, name, price, category, stock);
             menuItems.add(currentItem);
             System.out.println("Menu item created successfully: " + currentItem);
+        } catch (TooManyInstancesException e) {
+            System.out.println("Error: " + e.getMessage());
         } catch (RuntimeException e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -219,7 +234,7 @@ public class MainUI {
         }
     }
 
-    // TABLE MANAGEMENT
+
 
     public static void tableMenu() {
         while (true) {
@@ -382,7 +397,8 @@ public class MainUI {
         }
     }
 
-    // ORDER MANAGEMENT
+    
+
     public static void orderMenu() {
         while (true) {
             System.out.println("\n===== ORDER MANAGEMENT =====");
@@ -563,7 +579,7 @@ public class MainUI {
         }
     }
 
-    // CUSTOMER MANAGEMENT
+  
 
     public static void customerMenu() {
         while (true) {
@@ -665,7 +681,7 @@ public class MainUI {
         }
     }
 
-
+   
     public static void kitchenMenu() {
         while (true) {
             System.out.println("\n===== KITCHEN MANAGEMENT =====");
@@ -765,7 +781,11 @@ public class MainUI {
             chefs.add(currentChef);
             kitchen.addChef(currentChef);
             System.out.println("Chef added: " + currentChef);
-        } catch (Exception e) {
+        } catch (TooManyInstancesException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (IllegalStateException e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
@@ -778,8 +798,7 @@ public class MainUI {
         System.out.println("\n-- All Chefs --");
         for (int i = 0; i < chefs.size(); i++) {
             Chef c = chefs.get(i);
-            String status = c.isOnDuty() ? "ON DUTY" : "OFF";
-            System.out.println((i + 1) + ". " + c.getName() + " (" + c.getSpecialty() + ") - " + status);
+            System.out.println((i + 1) + ". " + c.getName() + " (" + c.getSpecialty() + ") - " + c.getChefStatus());
         }
     }
 
@@ -812,8 +831,12 @@ public class MainUI {
             System.out.println("No chef selected.");
             return;
         }
-        currentChef.clockOut();
-        System.out.println(currentChef.getName() + " clocked out.");
+        try {
+            currentChef.clockOut();
+            System.out.println(currentChef.getName() + " clocked out.");
+        } catch (IllegalStateException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 
     public static void assignOrderToChef() {
@@ -835,16 +858,18 @@ public class MainUI {
         Order[] activeOrders = kitchen.getActiveOrders();
         if (idx >= 0 && idx < count) {
             Order o = activeOrders[idx];
-            currentChef.acceptOrder(o);
-            System.out.println("Order assigned to " + currentChef.getName());
+            try {
+                currentChef.acceptOrder(o);
+                System.out.println("Order assigned to " + currentChef.getName());
+            } catch (IllegalStateException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
         } else {
             System.out.println("Invalid selection.");
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // UTILITY METHODS
-    // ═══════════════════════════════════════════════════════════════
+    // 
 
     public static String getInput() {
         String input = scanner.nextLine().trim();
