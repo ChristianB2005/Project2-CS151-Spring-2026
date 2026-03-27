@@ -59,8 +59,7 @@ public class MenuItem implements Discountable {
     }
 
     // Discountable interface methods — matches interface exactly
-    @Override
-    public void applyFlatDiscount() throws InvalidDiscountException {
+    public void applyFlatDiscount(double discountAmount) throws InvalidDiscountException {
         if (price <= 0) {
             throw new InvalidDiscountException("Cannot apply flat discount to item with invalid price.");
         }
@@ -70,8 +69,7 @@ public class MenuItem implements Discountable {
         }
     }
 
-    @Override
-    public void applyDiscount() throws InvalidDiscountException {
+    public void applyDiscount(double percentage) throws InvalidDiscountException {
         if (price <= 0) {
             throw new InvalidDiscountException("Cannot apply discount to item with invalid price.");
         }
