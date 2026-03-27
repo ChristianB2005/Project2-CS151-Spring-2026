@@ -1,5 +1,7 @@
 package model;
 
+import exceptions.ReservationException;
+import exceptions.TooManyInstancesException;
 import util.Constants;
 import util.OrderStatus;
 
@@ -14,9 +16,9 @@ public class Customer {
     private Reservation activeReservation;
     private static int instances = 0;
 
-    public Customer(String name, int partySize) {
+    public Customer(String name, int partySize) throws TooManyInstancesException {
         if (instances >= Constants.MAXIMUM_INSTANCES) {
-            throw new RuntimeException("Maximum number of Customer instances reached.");
+            throw new TooManyInstancesException("Maximum number of Customer instances reached.");
         }
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Customer name cannot be null or empty.");
@@ -120,13 +122,13 @@ public class Customer {
                 '}';
     }
 
-    public boolean makeReservation(Table table) {
+    public boolean makeReservation(Table table) throws ReservationException, TooManyInstancesException {
         if (table == null) {
             throw new IllegalArgumentException("Table cannot be null.");
         }
-        if (activeReservation != null &&
-                !activeReservation.getStatus().equals(Constants.RESERVATION_STATUS_CANCELLED)) {
-            return false;
+        if (activeReservation == null ||
+                activeReservation.getStatus().equals(Constants.RESERVATION_STATUS_CANCELLED)) {
+            throw new ReservationException("This customer has either not made a reservation or has cancelled their resevation.");
         }
         if (table.isOccupied() || table.isReserved()) {
             return false;
@@ -135,7 +137,7 @@ public class Customer {
             return false;
         }
         if (Reservation.getInstances() >= Constants.MAXIMUM_INSTANCES) {
-            return false;
+            throw new TooManyInstancesException("Too many reservations made.");
         }
 
         Reservation reservation = new Reservation(this.name, this.partySize, table.getTableID());
@@ -159,7 +161,7 @@ public class Customer {
             throw new RuntimeException("Cancelling wrong reservation.");
         }
         if (reservation.getStatus().equals(Constants.RESERVATION_STATUS_CANCELLED)) {
-            return false;
+            return true;
         }
 
         boolean cancelled = reservation.cancelReservation();
@@ -179,7 +181,7 @@ public class Customer {
 
     public boolean payBill(Order order) {
         if (order == null) {
-            throw new RuntimeException("No order provided for Customer to pay bill.");
+            throw new IllegalArgumentException("No order provided for Customer to pay bill.");
         }
         if (!order.getOrderStatus().equals(OrderStatus.READY)) {
             return false;

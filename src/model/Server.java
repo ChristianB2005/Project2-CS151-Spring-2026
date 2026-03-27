@@ -2,6 +2,7 @@ package model;
 
 import core.Employee;
 import exceptions.InvalidDiscountException;
+import exceptions.TooManyInstancesException;
 import util.Constants;
 import util.OrderStatus;
 
@@ -12,11 +13,11 @@ public class Server extends Employee {
     private int tableCount;
     private static int instanceCount = 0;
 
-    public Server(String employeeId, String name, String section) {
+    public Server(String employeeId, String name, String section) throws TooManyInstancesException {
         super(employeeId, name);
 
         if (instanceCount >= Constants.MAXIMUM_INSTANCES) {
-            throw new IllegalStateException("Maximum number of Server instances reached.");
+            throw new TooManyInstancesException("Maximum number of Server instances reached.");
         }
 
         if (section == null || section.trim().isEmpty()) {
