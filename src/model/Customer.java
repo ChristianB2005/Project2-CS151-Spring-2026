@@ -1,6 +1,7 @@
 package model;
 
 import util.Constants;
+import util.OrderStatus;
 
 public class Customer {
     private String customerID;
@@ -85,7 +86,7 @@ public class Customer {
         if (order == null) {
             throw new RuntimeException("No order provided for model.Customer to pay bill");
         }
-        if (!order.getStatus().equals(Constants.ORDER_READY)) {
+        if (!order.getStatus().equals(OrderStatus.READY)) {
             return false;
         }
         double amount = order.getPrice();
