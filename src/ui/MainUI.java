@@ -1,27 +1,22 @@
 package ui;
 
-import util.Constants;
+import exceptions.InvalidDiscountException;
+import exceptions.KitchenAtCapacityException;
+import exceptions.TooManyInstancesException;
+import java.util.ArrayList;
+import java.util.Scanner;
+import model.Chef;
+import model.Customer;
+import model.Kitchen;
 import model.MenuItem;
 import model.Order;
-import model.Customer;
 import model.Table;
-import model.Kitchen;
-import model.Chef;
-import exceptions.InvalidDiscountException;
-import exceptions.TooManyInstancesException;
-import exceptions.KitchenAtCapacityException;
-import exceptions.ReservationException;
 import util.OrderStatus;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
 
 public class MainUI {
 
     private static Scanner scanner = new Scanner(System.in);
 
-    // Current working objects
     private static MenuItem currentItem = null;
     private static Order currentOrder = null;
     private static Customer currentCustomer = null;
@@ -29,7 +24,7 @@ public class MainUI {
     private static Kitchen kitchen = new Kitchen(5); // max 5 active orders
     private static Chef currentChef = null;
 
-    // Storage lists
+    
     private static ArrayList<MenuItem> menuItems = new ArrayList<>();
     private static ArrayList<Customer> customers = new ArrayList<>();
     private static ArrayList<Table> tables = new ArrayList<>();
@@ -70,9 +65,7 @@ public class MainUI {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════
     // MENU ITEM MANAGEMENT
-    // ═══════════════════════════════════════════════════════════════
 
     public static void menuItemMenu() {
         while (true) {
@@ -226,36 +219,38 @@ public class MainUI {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════
     // TABLE MANAGEMENT
-    // ═══════════════════════════════════════════════════════════════
 
     public static void tableMenu() {
         while (true) {
             System.out.println("\n===== TABLE MANAGEMENT =====");
             System.out.println("1. Create Table");
-            System.out.println("2. Seat Customer at Table");
-            System.out.println("3. Clear Table");
-            System.out.println("4. View Table Status");
-            System.out.println("5. View All Tables");
-            System.out.println("6. Select Existing Table");
-            System.out.println("7. Assign Server to Table");
-            System.out.println("8. Back to Main Menu");
+            System.out.println("2. Add Customer to Table");
+            System.out.println("3. Remove Customer from Table");
+            System.out.println("4. Clear Table");
+            System.out.println("5. Reserve Table");
+            System.out.println("6. Cancel Reservation");
+            System.out.println("7. View Table Status");
+            System.out.println("8. View All Tables");
+            System.out.println("9. Select Existing Table");
+            System.out.println("10. Back to Main Menu");
             System.out.print("Enter your choice: ");
 
             String input = getInput();
 
             switch (input) {
                 case "1": createTable(); break;
-                case "2": seatCustomer(); break;
-                case "3": clearTable(); break;
-                case "4": viewTableStatus(); break;
-                case "5": viewAllTables(); break;
-                case "6": selectTable(); break;
-                case "7": assignServer(); break;
-                case "8": return;
+                case "2": addCustomerToTable(); break;
+                case "3": removeCustomerFromTable(); break;
+                case "4": clearTable(); break;
+                case "5": reserveTable(); break;
+                case "6": cancelReservation(); break;
+                case "7": viewTableStatus(); break;
+                case "8": viewAllTables(); break;
+                case "9": selectTable(); break;
+                case "10": return;
                 default:
-                    System.out.println("Invalid choice. Please enter a number between 1 and 8.");
+                    System.out.println("Invalid choice. Please enter a number between 1 and 10.");
             }
         }
     }
@@ -263,13 +258,10 @@ public class MainUI {
     public static void createTable() {
         System.out.println("\n-- Create Table --");
 
-        System.out.print("Enter table ID: ");
-        String tableId = getInput();
-
         int capacity = getValidInt("Enter seating capacity: ", 0);
 
         try {
-            currentTable = new Table(tableId, capacity);
+            currentTable = new Table(capacity);
             tables.add(currentTable);
             System.out.println("Table created: " + currentTable);
         } catch (Exception e) {
@@ -277,7 +269,7 @@ public class MainUI {
         }
     }
 
-    public static void seatCustomer() {
+    public static void addCustomerToTable() {
         if (currentTable == null) {
             System.out.println("No table selected. Please create or select one first.");
             return;
@@ -287,10 +279,29 @@ public class MainUI {
             return;
         }
         try {
-            currentTable.seatCustomer(currentCustomer);
-            System.out.println("Customer " + currentCustomer.getName() + " seated at table " + currentTable.getTableId());
-        } catch (ReservationException e) {
+            currentTable.addCustomer(currentCustomer);
+            currentCustomer.setIsSeated(true);
+            System.out.println("Customer " + currentCustomer.getName() + " seated at " + currentTable.getTableID());
+        } catch (IllegalStateException e) {
             System.out.println("Seating error: " + e.getMessage());
+        }
+    }
+
+    public static void removeCustomerFromTable() {
+        if (currentTable == null) {
+            System.out.println("No table selected.");
+            return;
+        }
+        if (currentCustomer == null) {
+            System.out.println("No customer selected.");
+            return;
+        }
+        try {
+            currentTable.removeCustomer(currentCustomer);
+            currentCustomer.setIsSeated(false);
+            System.out.println("Customer " + currentCustomer.getName() + " removed from " + currentTable.getTableID());
+        } catch (IllegalStateException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
@@ -299,8 +310,40 @@ public class MainUI {
             System.out.println("No table selected.");
             return;
         }
-        currentTable.clearTable();
-        System.out.println("Table " + currentTable.getTableId() + " has been cleared.");
+        // Set all customers at table to not seated
+        for (Customer c : currentTable.getCustomersAtTable()) {
+            c.setIsSeated(false);
+        }
+        currentTable.clearOccupancy();
+        System.out.println(currentTable.getTableID() + " has been cleared.");
+    }
+
+    public static void reserveTable() {
+        if (currentTable == null) {
+            System.out.println("No table selected.");
+            return;
+        }
+        System.out.print("Enter name for reservation: ");
+        String name = getInput();
+        try {
+            currentTable.reserveTable(name);
+            System.out.println("Table " + currentTable.getTableID() + " reserved for " + name);
+        } catch (IllegalStateException e) {
+            System.out.println("Reservation error: " + e.getMessage());
+        }
+    }
+
+    public static void cancelReservation() {
+        if (currentTable == null) {
+            System.out.println("No table selected.");
+            return;
+        }
+        if (!currentTable.isReserved()) {
+            System.out.println("Table is not reserved.");
+            return;
+        }
+        currentTable.cancelTableReservation();
+        System.out.println("Reservation cancelled for " + currentTable.getTableID());
     }
 
     public static void viewTableStatus() {
@@ -308,7 +351,7 @@ public class MainUI {
             System.out.println("No table selected.");
             return;
         }
-        System.out.println(currentTable);
+        System.out.println(currentTable.getTableDetails());
     }
 
     public static void viewAllTables() {
@@ -319,8 +362,8 @@ public class MainUI {
         System.out.println("\n-- All Tables --");
         for (int i = 0; i < tables.size(); i++) {
             Table t = tables.get(i);
-            String status = t.isOccupied() ? "OCCUPIED" : "AVAILABLE";
-            System.out.println((i + 1) + ". Table " + t.getTableId() + " (Capacity: " + t.getCapacity() + ") - " + status);
+            String status = t.isOccupied() ? "OCCUPIED" : (t.isReserved() ? "RESERVED" : "AVAILABLE");
+            System.out.println((i + 1) + ". " + t.getTableID() + " (Capacity: " + t.getMaxCapacity() + ") - " + status);
         }
     }
 
@@ -333,27 +376,13 @@ public class MainUI {
         int idx = getValidInt("Select table number: ", 0) - 1;
         if (idx >= 0 && idx < tables.size()) {
             currentTable = tables.get(idx);
-            System.out.println("Selected: Table " + currentTable.getTableId());
+            System.out.println("Selected: " + currentTable.getTableID());
         } else {
             System.out.println("Invalid selection.");
         }
     }
 
-    public static void assignServer() {
-        if (currentTable == null) {
-            System.out.println("No table selected.");
-            return;
-        }
-        System.out.print("Enter server name: ");
-        String serverName = getInput();
-        currentTable.setServerName(serverName);
-        System.out.println("Server " + serverName + " assigned to table " + currentTable.getTableId());
-    }
-
-    // ═══════════════════════════════════════════════════════════════
     // ORDER MANAGEMENT
-    // ═══════════════════════════════════════════════════════════════
-
     public static void orderMenu() {
         while (true) {
             System.out.println("\n===== ORDER MANAGEMENT =====");
@@ -534,9 +563,7 @@ public class MainUI {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════
     // CUSTOMER MANAGEMENT
-    // ═══════════════════════════════════════════════════════════════
 
     public static void customerMenu() {
         while (true) {
@@ -544,11 +571,10 @@ public class MainUI {
             System.out.println("1. Create Customer");
             System.out.println("2. View Customer Info");
             System.out.println("3. Update Customer Name");
-            System.out.println("4. Add Loyalty Points");
-            System.out.println("5. Redeem Loyalty Points");
-            System.out.println("6. View All Customers");
-            System.out.println("7. Select Existing Customer");
-            System.out.println("8. Back to Main Menu");
+            System.out.println("4. Set Loyalty Points");
+            System.out.println("5. View All Customers");
+            System.out.println("6. Select Existing Customer");
+            System.out.println("7. Back to Main Menu");
             System.out.print("Enter your choice: ");
 
             String input = getInput();
@@ -557,13 +583,12 @@ public class MainUI {
                 case "1": createCustomer(); break;
                 case "2": viewCustomerInfo(); break;
                 case "3": updateCustomerName(); break;
-                case "4": addLoyaltyPoints(); break;
-                case "5": redeemLoyaltyPoints(); break;
-                case "6": viewAllCustomers(); break;
-                case "7": selectCustomer(); break;
-                case "8": return;
+                case "4": setLoyaltyPoints(); break;
+                case "5": viewAllCustomers(); break;
+                case "6": selectCustomer(); break;
+                case "7": return;
                 default:
-                    System.out.println("Invalid choice. Please enter a number between 1 and 8.");
+                    System.out.println("Invalid choice. Please enter a number between 1 and 7.");
             }
         }
     }
@@ -571,16 +596,13 @@ public class MainUI {
     public static void createCustomer() {
         System.out.println("\n-- Create Customer --");
 
-        System.out.print("Enter customer ID: ");
-        String customerId = getInput();
-
         System.out.print("Enter customer name: ");
         String name = getInput();
 
         int partySize = getValidInt("Enter party size: ", 0);
 
         try {
-            currentCustomer = new Customer(customerId, name, partySize);
+            currentCustomer = new Customer(name, partySize);
             customers.add(currentCustomer);
             System.out.println("Customer created: " + currentCustomer);
         } catch (Exception e) {
@@ -607,28 +629,14 @@ public class MainUI {
         System.out.println("Name updated: " + currentCustomer);
     }
 
-    public static void addLoyaltyPoints() {
+    public static void setLoyaltyPoints() {
         if (currentCustomer == null) {
             System.out.println("No customer selected.");
             return;
         }
-        int points = getValidInt("Enter points to add: ", 0);
-        currentCustomer.addLoyaltyPoints(points);
-        System.out.println("Points added. Total: " + currentCustomer.getLoyaltyPoints());
-    }
-
-    public static void redeemLoyaltyPoints() {
-        if (currentCustomer == null) {
-            System.out.println("No customer selected.");
-            return;
-        }
-        int points = getValidInt("Enter points to redeem: ", 0);
-        try {
-            currentCustomer.redeemPoints(points);
-            System.out.println("Points redeemed. Remaining: " + currentCustomer.getLoyaltyPoints());
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
+        int points = getValidInt("Enter loyalty points: ", -1);
+        currentCustomer.setLoyaltyPoints(points);
+        System.out.println("Points set. Total: " + currentCustomer.getLoyaltyPoints());
     }
 
     public static void viewAllCustomers() {
@@ -657,9 +665,6 @@ public class MainUI {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // KITCHEN MANAGEMENT
-    // ═══════════════════════════════════════════════════════════════
 
     public static void kitchenMenu() {
         while (true) {
@@ -696,28 +701,30 @@ public class MainUI {
     }
 
     public static void viewActiveOrders() {
-        ArrayList<Order> activeOrders = kitchen.getActiveOrders();
-        if (activeOrders.isEmpty()) {
+        int count = kitchen.getActiveOrderCount();
+        if (count == 0) {
             System.out.println("No active orders in kitchen.");
             return;
         }
         System.out.println("\n-- Active Kitchen Orders --");
-        for (int i = 0; i < activeOrders.size(); i++) {
-            Order o = activeOrders.get(i);
+        Order[] activeOrders = kitchen.getActiveOrders();
+        for (int i = 0; i < count; i++) {
+            Order o = activeOrders[i];
             System.out.println((i + 1) + ". " + o.getOrderStatus() + " | $" + String.format("%.2f", o.getPrice()));
         }
     }
 
     public static void completeOrder() {
-        ArrayList<Order> activeOrders = kitchen.getActiveOrders();
-        if (activeOrders.isEmpty()) {
+        int count = kitchen.getActiveOrderCount();
+        if (count == 0) {
             System.out.println("No active orders to complete.");
             return;
         }
         viewActiveOrders();
         int idx = getValidInt("Select order to mark complete: ", 0) - 1;
-        if (idx >= 0 && idx < activeOrders.size()) {
-            Order o = activeOrders.get(idx);
+        Order[] activeOrders = kitchen.getActiveOrders();
+        if (idx >= 0 && idx < count) {
+            Order o = activeOrders[idx];
             o.setOrderStatus(OrderStatus.READY);
             kitchen.removeOrder(o);
             System.out.println("Order marked as READY!");
@@ -728,8 +735,9 @@ public class MainUI {
 
     public static void viewKitchenStatus() {
         System.out.println("\n-- Kitchen Status --");
-        System.out.println("Active orders: " + kitchen.getActiveOrders().size() + "/" + kitchen.getMaxCapacity());
+        System.out.println("Active orders: " + kitchen.getActiveOrderCount() + "/" + kitchen.getMaxCapacity());
         System.out.println("Chefs on duty: " + getOnDutyChefCount() + "/" + chefs.size());
+        System.out.println("Total orders completed: " + kitchen.getTotalOrdersCompleted());
     }
 
     private static int getOnDutyChefCount() {
@@ -817,15 +825,16 @@ public class MainUI {
             System.out.println("Chef is not on duty. Clock them in first.");
             return;
         }
-        ArrayList<Order> activeOrders = kitchen.getActiveOrders();
-        if (activeOrders.isEmpty()) {
+        int count = kitchen.getActiveOrderCount();
+        if (count == 0) {
             System.out.println("No active orders to assign.");
             return;
         }
         viewActiveOrders();
         int idx = getValidInt("Select order to assign: ", 0) - 1;
-        if (idx >= 0 && idx < activeOrders.size()) {
-            Order o = activeOrders.get(idx);
+        Order[] activeOrders = kitchen.getActiveOrders();
+        if (idx >= 0 && idx < count) {
+            Order o = activeOrders[idx];
             currentChef.acceptOrder(o);
             System.out.println("Order assigned to " + currentChef.getName());
         } else {
