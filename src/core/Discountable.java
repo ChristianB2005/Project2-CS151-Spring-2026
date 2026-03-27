@@ -1,7 +1,7 @@
 package core;
 
 public interface Discountable {
-    double calculateTotal();
+    double applyFlatDiscount();
     double applyDiscount(double percent);
     double getPrice();
 }

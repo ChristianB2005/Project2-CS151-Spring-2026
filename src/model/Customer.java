@@ -88,7 +88,7 @@ public class Customer {
         if (!order.getStatus().equals(Constants.ORDER_READY)) {
             return false;
         }
-        double amount = order.calculateTotal();
+        double amount = order.getPrice();
         if (amount <= 0)
             return true;
         double amountPaid = this.bill;

@@ -4,7 +4,7 @@ import core.Discountable;
 
 public class Order implements Discountable {
     @Override
-    public double calculateTotal() {
+    public double applyFlatDiscount() {
         return 0;
     }
 
