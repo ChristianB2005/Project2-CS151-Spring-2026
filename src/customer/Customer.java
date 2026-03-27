@@ -1,6 +1,7 @@
 package customer;
 
 import constants.Constants;
+import order.Order;
 import reservation.Reservation;
 import table.Table;
 
@@ -14,18 +15,18 @@ public class Customer {
     private Table reservedTable;
     private static int instances = 0;
 
-    public Customer(String name, int partySize, int loyaltyPoints, double bill, boolean isSeated, Table reservedTable) {
-        if (instances >= Constants.MAXIMUM_INSTANCES)
-            throw new RuntimeException("Maximum number of Customer instances reached.");
-        this.customerID = "Customer" + instances;
-        this.name = name;
-        this.partySize = partySize;
-        this.loyaltyPoints = loyaltyPoints;
-        this.bill = bill;
-        this.isSeated = isSeated;
-        this.reservedTable = reservedTable;
-        instances++;
-    }
+//    public Customer(String name, int partySize, int loyaltyPoints, double bill, boolean isSeated, Table reservedTable) {
+//        if (instances >= Constants.MAXIMUM_INSTANCES)
+//            throw new RuntimeException("Maximum number of Customer instances reached.");
+//        this.customerID = "Customer" + instances;
+//        this.name = name;
+//        this.partySize = partySize;
+//        this.loyaltyPoints = loyaltyPoints;
+//        this.bill = bill;
+//        this.isSeated = isSeated;
+//        this.reservedTable = reservedTable;
+//        instances++;
+//    }
 
     public Customer(String name, int partySize) {
         if (instances >= Constants.MAXIMUM_INSTANCES)
@@ -83,8 +84,15 @@ public class Customer {
         return true;
     }
 
-    public boolean payBill() {
-        if (this.bill <= 0)
+    public boolean payBill(Order order) {
+        if (order == null) {
+            throw new RuntimeException("No order provided for Customer to pay bill");
+        }
+        if (!order.getStatus().equals(Constants.ORDER_READY)) {
+            return false;
+        }
+        double amount = order.calculateTotal();
+        if (amount <= 0)
             return true;
         double amountPaid = this.bill;
         this.bill = 0.0;
