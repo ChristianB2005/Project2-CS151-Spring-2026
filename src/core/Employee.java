@@ -6,8 +6,14 @@ public abstract class Employee {
     private boolean isOnDuty;
 
     public Employee(String employeeId, String name) {
-        setEmployeeId(employeeId);
-        setName(name);
+        if (employeeId == null || employeeId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Employee ID cannot be null or empty.");
+        }
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Employee name cannot be null or empty.");
+        }
+        this.employeeId = employeeId.trim();
+        this.name = name.trim();
         this.isOnDuty = false;
     }
 

@@ -1,10 +1,9 @@
 package model;
-import java.util.HashMap;
-import java.util.ArrayList;
-
 import core.Discountable;
 import exceptions.InvalidDiscountException;
 import exceptions.TooManyInstancesException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import util.Constants;
 import util.OrderStatus;
 
@@ -39,7 +38,7 @@ public class Order implements Discountable{
         totalPrice -= orderList.get(customer).getPrice();
         orderList.remove(customer);
     }
-
+@Override
     public double getPrice(){
         return totalPrice;
     }
@@ -60,7 +59,12 @@ public class Order implements Discountable{
         return order;
     }
 
+@Override
+    public void applyFlatDiscount(double discountAmount) throws InvalidDiscountException{
+
+
     public void applyFlatDiscount(double discountAmount) throws InvalidDiscountException {
+
         if (totalPrice - discountAmount < 0){
             throw new InvalidDiscountException("Flat discount cannot make the price negative");
         }else{
@@ -68,7 +72,11 @@ public class Order implements Discountable{
         }
     }
 
+@Override
+    public void applyDiscount(double percentage) throws InvalidDiscountException{
+      
     public void applyDiscount(double percentage) throws InvalidDiscountException {
+
         if (percentage < 0 || percentage > 1){
             throw new InvalidDiscountException("Percentage discount must be between 0 and 1");
         }else{
