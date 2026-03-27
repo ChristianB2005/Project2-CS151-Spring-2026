@@ -8,7 +8,7 @@ import util.OrderStatus;
 public class Server extends Employee {
     private String section;
     private String serverStatus;
-    private Table[] assignedTables;
+    private final Table[] assignedTables;
     private int tableCount;
     private static int instanceCount = 0;
 
