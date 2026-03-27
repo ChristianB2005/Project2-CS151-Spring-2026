@@ -44,11 +44,11 @@ public class Order implements Discountable{
         return totalPrice;
     }
 
-    public void setStatus(OrderStatus status){
+    public void setOrderStatus(OrderStatus status){
         orderStatus = status;
     }
 
-    public OrderStatus getStatus(){
+    public OrderStatus getOrderStatus(){
         return orderStatus;
     }
 
@@ -82,6 +82,7 @@ public class Order implements Discountable{
         for (Customer customer : orderList.keySet()){
             returnString += customer.getName() + " ordered " + orderList.get(customer).getName() + "\n";
         }
+        returnString += "Order status: " + orderStatus;
         returnString += "Total price: " + totalPrice;
         return returnString;
     }
