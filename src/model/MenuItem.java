@@ -1,10 +1,10 @@
 package model;
+
 import util.Constants;
 import core.Discountable;
 import exceptions.InvalidDiscountException;
 
 public class MenuItem implements Discountable {
-
     private static int instanceCount = 0;
 
     private String itemId;
@@ -18,32 +18,83 @@ public class MenuItem implements Discountable {
         if (instanceCount >= Constants.MAXIMUM_INSTANCES) {
             throw new RuntimeException("Maximum number of MenuItem instances reached.");
         }
-        this.itemId = itemId;
-        this.name = name;
+        if (itemId == null || itemId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Item ID cannot be null or empty.");
+        }
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Item name cannot be null or empty.");
+        }
+        if (price < 0) {
+            throw new IllegalArgumentException("Price cannot be negative.");
+        }
+        if (category == null || category.trim().isEmpty()) {
+            throw new IllegalArgumentException("Category cannot be null or empty.");
+        }
+        if (stockCount < 0) {
+            throw new IllegalArgumentException("Stock count cannot be negative.");
+        }
+
+        this.itemId = itemId.trim();
+        this.name = name.trim();
         this.price = price;
-        this.category = category;
+        this.category = category.trim();
         this.stockCount = stockCount;
         this.isAvailable = stockCount > 0;
         instanceCount++;
     }
 
-    // Getters
-    public String getItemId() { return itemId; }
-    public String getName() { return name; }
-    public String getCategory() { return category; }
-    public boolean isAvailable() { return isAvailable; }
-    public int getStockCount() { return stockCount; }
-    public static int getInstanceCount() { return instanceCount; }
+    public String getItemId() {
+        return itemId;
+    }
 
-    // Setters
-    public void setItemId(String itemId) { this.itemId = itemId; }
-    public void setName(String name) { this.name = name; }
-    public void setCategory(String category) { this.category = category; }
-    public void setAvailable(boolean isAvailable) { this.isAvailable = isAvailable; }
+    public String getName() {
+        return name;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public int getStockCount() {
+        return stockCount;
+    }
+
+    public static int getInstanceCount() {
+        return instanceCount;
+    }
+
+    public void setItemId(String itemId) {
+        if (itemId == null || itemId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Item ID cannot be null or empty.");
+        }
+        this.itemId = itemId.trim();
+    }
+
+    public void setName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Item name cannot be null or empty.");
+        }
+        this.name = name.trim();
+    }
+
+    public void setCategory(String category) {
+        if (category == null || category.trim().isEmpty()) {
+            throw new IllegalArgumentException("Category cannot be null or empty.");
+        }
+        this.category = category.trim();
+    }
+
+    public void setAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
 
     public void setPrice(double price) {
-        if (price <= 0) {
-            throw new IllegalArgumentException("Price must be greater than zero.");
+        if (price < 0) {
+            throw new IllegalArgumentException("Price cannot be negative.");
         }
         this.price = price;
     }
@@ -53,30 +104,28 @@ public class MenuItem implements Discountable {
             throw new IllegalArgumentException("Stock count cannot be negative.");
         }
         this.stockCount = stockCount;
-        if (this.stockCount == 0) {
-            this.isAvailable = false;
-        }
+        this.isAvailable = stockCount > 0;
     }
 
-    // Discountable interface methods — matches interface exactly
+    @Override
     public void applyFlatDiscount(double discountAmount) throws InvalidDiscountException {
-        if (price <= 0) {
-            throw new InvalidDiscountException("Cannot apply flat discount to item with invalid price.");
+        if (discountAmount < 0) {
+            throw new InvalidDiscountException("Flat discount cannot be negative.");
         }
-        this.price -= 1.00; // flat $1.00 discount — adjust as needed
-        if (this.price <= 0) {
-            throw new InvalidDiscountException("Discount cannot reduce price to zero or below.");
+        if (discountAmount > price) {
+            throw new InvalidDiscountException("Flat discount cannot reduce price below zero.");
         }
+
+        this.price -= discountAmount;
     }
 
+    @Override
     public void applyDiscount(double percentage) throws InvalidDiscountException {
-        if (price <= 0) {
-            throw new InvalidDiscountException("Cannot apply discount to item with invalid price.");
+        if (percentage < 0 || percentage > 1) {
+            throw new InvalidDiscountException("Percentage discount must be between 0 and 1.");
         }
-        this.price -= (this.price * 0.10); // 10% discount — adjust as needed
-        if (this.price <= 0) {
-            throw new InvalidDiscountException("Discount cannot reduce price to zero or below.");
-        }
+
+        this.price *= (1 - percentage);
     }
 
     @Override
@@ -84,10 +133,9 @@ public class MenuItem implements Discountable {
         return this.price;
     }
 
-    // Other MenuItem methods
     public void updatePrice(double newPrice) {
-        if (newPrice <= 0) {
-            throw new IllegalArgumentException("Price must be greater than zero.");
+        if (newPrice < 0) {
+            throw new IllegalArgumentException("Price cannot be negative.");
         }
         this.price = newPrice;
     }
@@ -116,8 +164,8 @@ public class MenuItem implements Discountable {
 
     public double applyModifier(double modifierAmount) {
         double modifiedPrice = this.price + modifierAmount;
-        if (modifiedPrice <= 0) {
-            throw new IllegalArgumentException("Modified price cannot be zero or negative.");
+        if (modifiedPrice < 0) {
+            throw new IllegalArgumentException("Modified price cannot be negative.");
         }
         return modifiedPrice;
     }
@@ -128,8 +176,11 @@ public class MenuItem implements Discountable {
 
     @Override
     public String toString() {
-        return "MenuItem[id=" + itemId + ", name=" + name + ", price=$" + price
-                + ", category=" + category + ", available=" + isAvailable
-                + ", stock=" + stockCount + "]";
+        return "MenuItem[id=" + itemId +
+                ", name=" + name +
+                ", price=$" + price +
+                ", category=" + category +
+                ", available=" + isAvailable +
+                ", stock=" + stockCount + "]";
     }
 }

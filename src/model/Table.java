@@ -8,6 +8,8 @@ public class Table {
     private int maxCapacity;
     private Server server;
     private boolean isOccupied;
+    private boolean isReserved;
+    private String reservedForName;
     private String tableID;
     private final ArrayList<Customer> customersAtTable;
 
@@ -24,6 +26,8 @@ public class Table {
         this.tableID = "Table" + numTables;
         this.server = null;
         this.isOccupied = false;
+        this.isReserved = false;
+        this.reservedForName = null;
         this.customersAtTable = new ArrayList<Customer>();
     }
 
@@ -72,6 +76,14 @@ public class Table {
         this.isOccupied = isOccupied;
     }
 
+    public boolean isReserved() {
+        return isReserved;
+    }
+
+    public String getReservedForName() {
+        return reservedForName;
+    }
+
     public ArrayList<Customer> getCustomersAtTable() {
         return customersAtTable;
     }
@@ -81,12 +93,34 @@ public class Table {
     }
 
     public boolean canSeatParty(int partySize) {
-        return partySize > 0 && partySize <= maxCapacity && !isOccupied;
+        return partySize > 0 && partySize <= maxCapacity && !isOccupied && !isReserved;
+    }
+
+    public void reserveTable(String customerName) {
+        if (customerName == null || customerName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Customer name cannot be null or empty.");
+        }
+        if (isOccupied) {
+            throw new IllegalStateException("Cannot reserve an occupied table.");
+        }
+        if (isReserved) {
+            throw new IllegalStateException("Table is already reserved.");
+        }
+
+        this.isReserved = true;
+        this.reservedForName = customerName.trim();
+    }
+
+    public void cancelTableReservation() {
+        this.isReserved = false;
+        this.reservedForName = null;
     }
 
     public void clearOccupancy() {
         this.server = null;
         this.isOccupied = false;
+        this.isReserved = false;
+        this.reservedForName = null;
         customersAtTable.clear();
     }
 
@@ -102,6 +136,12 @@ public class Table {
         }
 
         customersAtTable.add(newCustomer);
+        this.isOccupied = true;
+
+        if (isReserved && reservedForName != null &&
+                reservedForName.equalsIgnoreCase(newCustomer.getName())) {
+            cancelTableReservation();
+        }
     }
 
     public void removeCustomer(Customer customer) {
@@ -122,6 +162,8 @@ public class Table {
                 "tableID='" + tableID + '\'' +
                 ", maxCapacity=" + maxCapacity +
                 ", occupied=" + isOccupied +
+                ", reserved=" + isReserved +
+                ", reservedForName='" + reservedForName + '\'' +
                 ", customerCount=" + customersAtTable.size() +
                 ", serverAssigned=" + (server != null) +
                 '}';
@@ -133,6 +175,7 @@ public class Table {
                 "tableID='" + tableID + '\'' +
                 ", maxCapacity=" + maxCapacity +
                 ", occupied=" + isOccupied +
+                ", reserved=" + isReserved +
                 ", customerCount=" + customersAtTable.size() +
                 '}';
     }
