@@ -60,14 +60,14 @@ public class Customer {
     public boolean makeReservation(Table table) {
         if (table.isOccupied())
             return false;
-        if (this.partySize > table.getCapacity())
+        if (this.partySize > table.getMaxCapacity())
             return false;
         if (Reservation.getInstances() >= Constants.MAXIMUM_INSTANCES)
             return false;
 
-        Reservation reservation = new Reservation(this.name, this.partySize, table.getTableId());
+        Reservation reservation = new Reservation(this.name, this.partySize, table.getTableID());
         reservation.confirmReservation();
-        table.seatCustomer(this);
+        table.addCustomer(this);
         return true;
     }
 
@@ -86,7 +86,7 @@ public class Customer {
         if (order == null) {
             throw new RuntimeException("No order provided for model.Customer to pay bill");
         }
-        if (!order.getStatus().equals(OrderStatus.READY)) {
+        if (!order.getOrderStatus().equals(OrderStatus.READY)) {
             return false;
         }
         double amount = order.getPrice();

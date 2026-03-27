@@ -1,4 +1,6 @@
 package model;
+import util.Constants;
+
 import java.util.ArrayList;
 
 public class Table{
@@ -6,6 +8,7 @@ public class Table{
     private int maxCapacity;
     private Server server;
     private boolean isOccupied;
+    private String tableID;
     private ArrayList<Customer> customersAtTable = new ArrayList<Customer>();
 
     public Table(int maxCapacity){
@@ -14,7 +17,11 @@ public class Table{
         }
         numTables++;
         this.maxCapacity = maxCapacity;
+        this.tableID = "Table" + numTables;
     }
+
+    public String getTableID() { return tableID; }
+    public void setTableID(String tableID) { this.tableID = tableID; }
 
     public int getMaxCapacity(){
         return this.maxCapacity;
