@@ -1,10 +1,3 @@
-package customer;
-
-import constants.Constants;
-import order.Order;
-import reservation.Reservation;
-import table.Table;
-
 public class Customer {
     private String customerID;
     private String name;

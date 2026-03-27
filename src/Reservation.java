@@ -1,8 +1,3 @@
-package reservation;
-
-import constants.Constants;
-import table.Table;
-
 public class Reservation {
     private String reservationId;
     private String name;

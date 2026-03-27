@@ -1,7 +1,3 @@
-package table;
-
-import customer.Customer;
-
 public class Table {
     private boolean isReserved;
 

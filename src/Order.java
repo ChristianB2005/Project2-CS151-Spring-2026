@@ -1,7 +1,3 @@
-package order;
-
-import priceable.Discountable;
-
 public class Order implements Discountable {
     @Override
     public double calculateTotal() {
