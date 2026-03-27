@@ -2,6 +2,7 @@ package model;
 import util.Constants;
 import core.Discountable;
 import exceptions.InvalidDiscountException;
+import exceptions.TooManyInstancesException;
 
 public class MenuItem implements Discountable {
 
@@ -14,9 +15,9 @@ public class MenuItem implements Discountable {
     private boolean isAvailable;
     private int stockCount;
 
-    public MenuItem(String itemId, String name, double price, String category, int stockCount) {
+    public MenuItem(String itemId, String name, double price, String category, int stockCount) throws TooManyInstancesException{
         if (instanceCount >= Constants.MAXIMUM_INSTANCES) {
-            throw new RuntimeException("Maximum number of MenuItem instances reached.");
+            throw new TooManyInstancesException("Maximum number of MenuItem instances reached.");
         }
         this.itemId = itemId;
         this.name = name;

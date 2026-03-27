@@ -44,11 +44,11 @@ public class Order implements Discountable{
         return totalPrice;
     }
 
-    public void setOrderStatus(OrderStatus status){
+    public void setStatus(OrderStatus status){
         orderStatus = status;
     }
 
-    public OrderStatus getOrderStatus(){
+    public OrderStatus getStatus(){
         return orderStatus;
     }
 

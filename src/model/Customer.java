@@ -1,7 +1,6 @@
 package model;
 
 import util.Constants;
-import util.OrderStatus;
 
 public class Customer {
     private String customerID;
@@ -60,14 +59,14 @@ public class Customer {
     public boolean makeReservation(Table table) {
         if (table.isOccupied())
             return false;
-        if (this.partySize > table.getMaxCapacity())
+        if (this.partySize > table.getCapacity())
             return false;
         if (Reservation.getInstances() >= Constants.MAXIMUM_INSTANCES)
             return false;
 
-        Reservation reservation = new Reservation(this.name, this.partySize, table.getTableID());
+        Reservation reservation = new Reservation(this.name, this.partySize, table.getTableId());
         reservation.confirmReservation();
-        table.addCustomer(this);
+        table.seatCustomer(this);
         return true;
     }
 
@@ -86,7 +85,7 @@ public class Customer {
         if (order == null) {
             throw new RuntimeException("No order provided for model.Customer to pay bill");
         }
-        if (!order.getOrderStatus().equals(OrderStatus.READY)) {
+        if (!order.getStatus().equals(Constants.ORDER_READY)) {
             return false;
         }
         double amount = order.getPrice();

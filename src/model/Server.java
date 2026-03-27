@@ -1,4 +1,6 @@
 package model;
 
-public class Server {
+import core.Employee;
+
+public class Server{
 }

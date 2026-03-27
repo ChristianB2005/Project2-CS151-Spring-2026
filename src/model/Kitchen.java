@@ -1,6 +1,7 @@
 package model;
 
 import exceptions.KitchenAtCapacityException;
+import exceptions.TooManyInstancesException;
 import util.Constants;
 
 public class Kitchen {
@@ -12,9 +13,9 @@ public class Kitchen {
     private int totalOrdersCompleted;
     private static int instanceCount = 0;
 
-    public Kitchen(int maxCapacity) {
+    public Kitchen(int maxCapacity) throws TooManyInstancesException{
         if (instanceCount >= Constants.MAXIMUM_INSTANCES) {
-            throw new IllegalStateException("Maximum number of model.Kitchen instances reached.");
+            throw new TooManyInstancesException("Maximum number of model.Kitchen instances reached.");
         }
 
         this.activeOrders = new Order[Constants.MAXIMUM_INSTANCES];
