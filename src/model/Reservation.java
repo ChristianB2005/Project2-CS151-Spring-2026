@@ -1,5 +1,6 @@
 package model;
 
+import exceptions.TooManyInstancesException;
 import util.Constants;
 
 public class Reservation {
@@ -10,9 +11,9 @@ public class Reservation {
     private String status;
     private static int instances = 0;
 
-    public Reservation(String customerName, int partySize, String tableId) {
+    public Reservation(String customerName, int partySize, String tableId) throws TooManyInstancesException {
         if (instances >= Constants.MAXIMUM_INSTANCES) {
-            throw new RuntimeException("Maximum number of Reservation instances reached.");
+            throw new TooManyInstancesException("Maximum number of Reservation instances reached.");
         }
         if (customerName == null || customerName.trim().isEmpty()) {
             throw new IllegalArgumentException("Customer name cannot be null or empty.");

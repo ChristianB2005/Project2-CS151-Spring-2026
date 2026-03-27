@@ -23,9 +23,9 @@ public class Order implements Discountable{
         totalPrice = 0;
     }
 
-    public void addOrder(Customer customer, MenuItem order){
+    public void addOrder(Customer customer, MenuItem order) {
         if (orderStatus != OrderStatus.TAKING_ORDER){
-            // throw error
+            throw new IllegalStateException("Order.status must be set to OrderStatus.READY before adding order.");
         }
         orderList.put(customer, order);
         totalPrice += order.getPrice();
@@ -33,7 +33,7 @@ public class Order implements Discountable{
 
     public void removeOrder(Customer customer){
         if (orderStatus != OrderStatus.TAKING_ORDER){
-            // throw error
+            throw new IllegalStateException("Order.status must be set to OrderStatus.TAKING_ORDER before adding order.");
         }
         totalPrice -= orderList.get(customer).getPrice();
         orderList.remove(customer);
@@ -58,16 +58,25 @@ public class Order implements Discountable{
         }
         return order;
     }
+
 @Override
     public void applyFlatDiscount(double discountAmount) throws InvalidDiscountException{
+
+
+    public void applyFlatDiscount(double discountAmount) throws InvalidDiscountException {
+
         if (totalPrice - discountAmount < 0){
             throw new InvalidDiscountException("Flat discount cannot make the price negative");
         }else{
             totalPrice -= discountAmount;
         }
     }
+
 @Override
     public void applyDiscount(double percentage) throws InvalidDiscountException{
+      
+    public void applyDiscount(double percentage) throws InvalidDiscountException {
+
         if (percentage < 0 || percentage > 1){
             throw new InvalidDiscountException("Percentage discount must be between 0 and 1");
         }else{
