@@ -31,27 +31,25 @@ public class Order implements Discountable{
         return totalPrice;
     }
 
-    public void submitOrder(){
-        if (orderStatus == OrderStatus.TAKING_ORDER){
-            orderStatus = OrderStatus.IN_KITCHEN;
-            //TODO: iterate over orderList and update stock based on orders taken
-        }else{
-            // throw error
-        }
+    public void setOrderStatus(OrderStatus status){
+        orderStatus = status;
     }
 
-    public void applyFlatDiscount(double discountAmount){
+    public OrderStatus getOrderStatus(){
+        return orderStatus;
+    }
+
+    public void applyFlatDiscount(double discountAmount) throws InvalidDiscountException{
         if (totalPrice - discountAmount < 0){
-            // Current implementation eats discount over allowed amount. Maybe throw error instead?
-            totalPrice = 0;
+            throw new InvalidDiscountException("Flat discount cannot make the price negative");
         }else{
             totalPrice -= discountAmount;
         }
     }
 
-    public void applyDiscount(double percentage){
+    public void applyDiscount(double percentage) throws InvalidDiscountException{
         if (percentage < 0 || percentage > 1){
-            // throw error
+            throw new InvalidDiscountException("Percentage discount must be between 0 and 1");
         }else{
             totalPrice *= (1 - percentage);
         }
