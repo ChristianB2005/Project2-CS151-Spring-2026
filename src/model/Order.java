@@ -3,10 +3,7 @@ package model;
 import core.Discountable;
 import exceptions.InvalidDiscountException;
 import exceptions.TooManyInstancesException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
+import exceptions.InvalidOrderState;
 import util.Constants;
 import util.OrderStatus;
 
@@ -26,17 +23,20 @@ public class Order implements Discountable {
         totalPrice = 0;
     }
 
-    public void addOrder(Customer customer, MenuItem order) {
-        if (orderStatus != OrderStatus.TAKING_ORDER) {
-            throw new IllegalStateException("Order.status must be set to OrderStatus.TAKING_ORDER before adding order.");
+    public void addOrder(Customer customer, MenuItem order) throws InvalidOrderState{
+        if (orderStatus != OrderStatus.TAKING_ORDER){
+            throw new InvalidOrderState("Cannot modify order after it has been submitted");
+        }
+        if (orderList.containsKey(customer)){
+            totalPrice -= orderList.get(customer).getPrice();
         }
         orderList.put(customer, order);
         totalPrice += order.getPrice();
     }
 
-    public void removeOrder(Customer customer) {
-        if (orderStatus != OrderStatus.TAKING_ORDER) {
-            throw new IllegalStateException("Order.status must be set to OrderStatus.TAKING_ORDER before removing order.");
+    public void removeOrder(Customer customer) throws InvalidOrderState{
+        if (orderStatus != OrderStatus.TAKING_ORDER){
+            throw new InvalidOrderState("Cannot modify order after it has been submitted");
         }
         totalPrice -= orderList.get(customer).getPrice();
         orderList.remove(customer);
@@ -67,9 +67,11 @@ public class Order implements Discountable {
     public void applyFlatDiscount(double discountAmount) throws InvalidDiscountException {
         if (totalPrice - discountAmount < 0) {
             throw new InvalidDiscountException("Flat discount cannot make the price negative");
-        } else {
-            totalPrice -= discountAmount;
         }
+        if (discountAmount < 0){
+            throw new InvalidDiscountException("Discount amount cannot be negative");
+        }
+        totalPrice -= discountAmount;
     }
 
     @Override
@@ -87,6 +89,7 @@ public class Order implements Discountable {
         for (Customer customer : orderList.keySet()) {
             returnString += customer.getName() + " ordered " + orderList.get(customer).getName() + "\n";
         }
+        returnString += "Order status: " + orderStatus;
         returnString += "Total price: " + totalPrice;
         return returnString;
     }

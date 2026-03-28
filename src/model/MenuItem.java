@@ -4,6 +4,7 @@ import exceptions.TooManyInstancesException;
 import util.Constants;
 import core.Discountable;
 import exceptions.InvalidDiscountException;
+import exceptions.TooManyInstancesException;
 
 public class MenuItem implements Discountable {
     private static int instanceCount = 0;
