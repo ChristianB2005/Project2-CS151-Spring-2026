@@ -1,5 +1,6 @@
 package ui;
 
+import exceptions.InvalidOrderState;
 import util.Constants;
 import model.MenuItem;
 import model.Order;
@@ -532,7 +533,13 @@ public class MainUI {
                 System.out.println("Item is unavailable.");
                 return;
             }
-            currentOrder.addOrder(currentCustomer, item);
+
+            try {
+                currentOrder.addOrder(currentCustomer, item);
+            } catch (InvalidOrderState e) {
+                System.out.println(e.getMessage());
+            }
+
             item.decrementStock();
             System.out.println("Added " + item.getName() + " for " + currentCustomer.getName());
             System.out.println("Order total: $" + String.format("%.2f", currentOrder.getPrice()));
@@ -554,7 +561,11 @@ public class MainUI {
             System.out.println("No customer selected.");
             return;
         }
-        currentOrder.removeOrder(currentCustomer);
+        try {
+            currentOrder.removeOrder(currentCustomer);
+        } catch (InvalidOrderState e) {
+            System.out.println(e.getMessage());
+        }
         System.out.println("Removed item for " + currentCustomer.getName());
     }
 

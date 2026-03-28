@@ -2,6 +2,7 @@ package model;
 
 import core.Employee;
 import exceptions.InvalidDiscountException;
+import exceptions.InvalidOrderState;
 import exceptions.TooManyInstancesException;
 import util.Constants;
 import util.OrderStatus;
@@ -198,7 +199,11 @@ public class Server extends Employee {
             throw new IllegalStateException("Order is no longer accepting items.");
         }
 
-        order.addOrder(customer, item);
+        try {
+            order.addOrder(customer, item);
+        } catch (InvalidOrderState e) {
+            System.out.println(e.getMessage());
+        }
         item.decrementStock();
 
         refreshServerStatus();
