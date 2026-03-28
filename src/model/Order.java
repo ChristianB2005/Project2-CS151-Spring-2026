@@ -1,6 +1,4 @@
 package model;
-import java.util.HashMap;
-import java.util.ArrayList;
 
 import core.Discountable;
 import exceptions.InvalidDiscountException;
@@ -9,14 +7,14 @@ import exceptions.InvalidOrderState;
 import util.Constants;
 import util.OrderStatus;
 
-public class Order implements Discountable{
+public class Order implements Discountable {
     private static int numOrders = 0;
     private HashMap<Customer, MenuItem> orderList;
     private double totalPrice;
     private OrderStatus orderStatus;
 
-    public Order() throws TooManyInstancesException{
-        if (numOrders >= Constants.MAXIMUM_INSTANCES){
+    public Order() throws TooManyInstancesException {
+        if (numOrders >= Constants.MAXIMUM_INSTANCES) {
             throw new TooManyInstancesException("Maximum number of Order instances reached");
         }
         orderList = new HashMap<>();
@@ -44,28 +42,30 @@ public class Order implements Discountable{
         orderList.remove(customer);
     }
 
-    public double getPrice(){
+    @Override
+    public double getPrice() {
         return totalPrice;
     }
 
-    public void setOrderStatus(OrderStatus status){
+    public void setOrderStatus(OrderStatus status) {
         orderStatus = status;
     }
 
-    public OrderStatus getOrderStatus(){
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public ArrayList<MenuItem> getOrderContents(){
+    public ArrayList<MenuItem> getOrderContents() {
         ArrayList<MenuItem> order = new ArrayList<>();
-        for (MenuItem item : orderList.values()){
+        for (MenuItem item : orderList.values()) {
             order.add(item);
         }
         return order;
     }
 
-    public void applyFlatDiscount(double discountAmount) throws InvalidDiscountException{
-        if (totalPrice - discountAmount < 0){
+    @Override
+    public void applyFlatDiscount(double discountAmount) throws InvalidDiscountException {
+        if (totalPrice - discountAmount < 0) {
             throw new InvalidDiscountException("Flat discount cannot make the price negative");
         }
         if (discountAmount < 0){
@@ -74,18 +74,19 @@ public class Order implements Discountable{
         totalPrice -= discountAmount;
     }
 
-    public void applyDiscount(double percentage) throws InvalidDiscountException{
-        if (percentage < 0 || percentage > 1){
+    @Override
+    public void applyDiscount(double percentage) throws InvalidDiscountException {
+        if (percentage < 0 || percentage > 1) {
             throw new InvalidDiscountException("Percentage discount must be between 0 and 1");
-        }else{
+        } else {
             totalPrice *= (1 - percentage);
         }
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         String returnString = "";
-        for (Customer customer : orderList.keySet()){
+        for (Customer customer : orderList.keySet()) {
             returnString += customer.getName() + " ordered " + orderList.get(customer).getName() + "\n";
         }
         returnString += "Order status: " + orderStatus;

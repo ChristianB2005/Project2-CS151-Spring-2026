@@ -13,9 +13,9 @@ public class Kitchen {
     private int totalOrdersCompleted;
     private static int instanceCount = 0;
 
-    public Kitchen(int maxCapacity) throws TooManyInstancesException{
+    public Kitchen(int maxCapacity) throws TooManyInstancesException {
         if (instanceCount >= Constants.MAXIMUM_INSTANCES) {
-            throw new IllegalStateException("Maximum number of Kitchen instances reached.");
+            throw new TooManyInstancesException("Maximum number of Kitchen instances reached.");
         }
 
         if (maxCapacity <= 0) {
@@ -184,7 +184,7 @@ public class Kitchen {
             }
         }
 
-        return "Kitchen Daily Summary:\n" +
+        return "Kitchen Daily Summary:" +
                 "Active Orders: " + activeOrderCount + "\n" +
                 "Total Orders Completed: " + totalOrdersCompleted + "\n" +
                 "Total Staff: " + staffCount + "\n" +
