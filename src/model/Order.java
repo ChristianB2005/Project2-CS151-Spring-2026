@@ -7,6 +7,9 @@ import exceptions.InvalidOrderState;
 import util.Constants;
 import util.OrderStatus;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Order implements Discountable {
     private static int numOrders = 0;
     private HashMap<Customer, MenuItem> orderList;
