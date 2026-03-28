@@ -26,19 +26,19 @@ public class Order implements Discountable {
         totalPrice = 0;
     }
 
-    public void addOrder(Customer customer, MenuItem order) throws InvalidOrderState{
-        if (orderStatus != OrderStatus.TAKING_ORDER){
+    public void addOrder(Customer customer, MenuItem order) throws InvalidOrderState {
+        if (orderStatus != OrderStatus.TAKING_ORDER) {
             throw new InvalidOrderState("Cannot modify order after it has been submitted");
         }
-        if (orderList.containsKey(customer)){
+        if (orderList.containsKey(customer)) {
             totalPrice -= orderList.get(customer).getPrice();
         }
         orderList.put(customer, order);
         totalPrice += order.getPrice();
     }
 
-    public void removeOrder(Customer customer) throws InvalidOrderState{
-        if (orderStatus != OrderStatus.TAKING_ORDER){
+    public void removeOrder(Customer customer) throws InvalidOrderState {
+        if (orderStatus != OrderStatus.TAKING_ORDER) {
             throw new InvalidOrderState("Cannot modify order after it has been submitted");
         }
         totalPrice -= orderList.get(customer).getPrice();
@@ -71,7 +71,7 @@ public class Order implements Discountable {
         if (totalPrice - discountAmount < 0) {
             throw new InvalidDiscountException("Flat discount cannot make the price negative");
         }
-        if (discountAmount < 0){
+        if (discountAmount < 0) {
             throw new InvalidDiscountException("Discount amount cannot be negative");
         }
         totalPrice -= discountAmount;

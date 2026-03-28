@@ -12,7 +12,7 @@ public class Chef extends Employee {
     private int orderCount;
     private static int instanceCount = 0;
 
-    public Chef(String employeeId, String name, String specialty) throws TooManyInstancesException { 
+    public Chef(String employeeId, String name, String specialty) throws TooManyInstancesException {
         super(employeeId, name);
 
         if (instanceCount >= Constants.MAXIMUM_INSTANCES) {
