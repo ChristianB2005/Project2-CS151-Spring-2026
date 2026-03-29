@@ -1,30 +1,66 @@
 package core;
+
 public abstract class Employee {
-    protected String employeeId;
-    protected String name;
-    protected boolean isOnDuty;
+    private String employeeId;
+    private String name;
+    private boolean isOnDuty;
 
     public Employee(String employeeId, String name) {
-        this.employeeId = employeeId;
-        this.name = name;
+        if (employeeId == null || employeeId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Employee ID cannot be null or empty.");
+        }
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Employee name cannot be null or empty.");
+        }
+        this.employeeId = employeeId.trim();
+        this.name = name.trim();
         this.isOnDuty = false;
     }
 
-    public String getEmployeeId() { return employeeId; }
-    public String getName() { return name; }
-    public boolean isOnDuty() { return isOnDuty; }
+    public String getEmployeeId() {
+        return employeeId;
+    }
 
-    public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
-    public void setName(String name) { this.name = name; }
-    public void setOnDuty(boolean onDuty) { this.isOnDuty = onDuty; }
+    public String getName() {
+        return name;
+    }
 
-    public void clockIn() { this.isOnDuty = true; }
-    public void clockOut() { this.isOnDuty = false; }
+    public boolean isOnDuty() {
+        return isOnDuty;
+    }
+
+    public void setEmployeeId(String employeeId) {
+        if (employeeId == null || employeeId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Employee ID cannot be null or empty.");
+        }
+        this.employeeId = employeeId.trim();
+    }
+
+    public void setName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Employee name cannot be null or empty.");
+        }
+        this.name = name.trim();
+    }
+
+    public void setOnDuty(boolean onDuty) {
+        this.isOnDuty = onDuty;
+    }
+
+    public void clockIn() {
+        this.isOnDuty = true;
+    }
+
+    public void clockOut() {
+        this.isOnDuty = false;
+    }
 
     public abstract void updateStatus(String status);
 
     @Override
     public String toString() {
-        return "Employee[id=" + employeeId + ", name=" + name + ", onDuty=" + isOnDuty + "]";
+        return "Employee[id=" + employeeId +
+                ", name=" + name +
+                ", onDuty=" + isOnDuty + "]";
     }
 }
